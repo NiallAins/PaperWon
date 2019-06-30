@@ -1,4 +1,4 @@
-# paperwon
+# PaperWon
 
 ## Project setup
 ```

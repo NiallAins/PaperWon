@@ -1,29 +1,86 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <header>
+      <nav class="contain">
+        <router-link :to="'/'" class="logo"> Paper<span>Won</span> </router-link>
+        <router-link :to="'papers'"> Papers </router-link>
+        <router-link :to="'topics'"> Topics </router-link>
+        <router-link :to="'about'" class="push-right"> About Us </router-link>
+      </nav>
+    </header>
+    <div class="view-container contain">
+      <router-view />
     </div>
-    <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
+  @import './_vars';
+  @import './_global';
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    box-shadow: 0 0 5px 0 $c-shadow;
+  }
+
+  .logo {
+    color: $c-prim;
+    font-size: 20px;
     font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+    margin-right: 15px;
+
+    span {
+      color: $c-gray;
+      font-weight: normal;
+      font-size: 15px;
+      padding-left: 2px;
+      text-transform: uppercase;
     }
   }
-}
+
+  nav {
+    a {
+      font-family: $f-sec;
+      border-bottom: none;
+    }
+
+    a:not(.logo) {
+      position: relative;
+      display: inline-block;
+      color: $c-font-l;
+      font-weight: bold;
+      padding: 0 20px;
+      font-size: 14px;
+      line-height: 50px;
+      
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        height: 3px;
+        background-color: $c-prim;
+        width: 0;
+        transition: all 0.2s $e-bounce;
+      }
+
+      &:hover:after {
+        width: 50%;
+        left: 25%;
+      }
+
+      &.router-link-exact-active:after {
+        width: 100%;
+        left: 0;
+      }
+    }
+  }
+
+  .view-container {
+    margin-top: 100px;
+  }
 </style>

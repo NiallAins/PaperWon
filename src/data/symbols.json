@@ -1,0 +1,28 @@
+{
+  "notequal": 8800,
+  "times": 215,
+  "divide": 247,
+  "greaterequal": 8925,
+  "lessequal": 8924,
+  "plusminus": 177,
+  "sum": 8721,
+  "infinity": 8734,
+  "follows": 8658,
+  
+  "integral": 8747,
+  "differential": 8706,
+  "function": 402,
+  
+  "element": 8712,
+  "notelement": 8713,
+  "intersection": 8745,
+  "union": 8746,
+  "subset": 8834,
+  "superset": 8835,
+  "notsubset": 8836,
+  "notsuperset": 8837,
+  
+  "natural": 8469,
+  "real": 8477,
+  "integer": 8484
+}
