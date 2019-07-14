@@ -9,7 +9,7 @@
 		<div class="equation-contain">
 			<span
 				class="term"
-				v-for="t in terms"
+				v-for="t in frames[step].terms"
 				:class="[
 					'color-' + t.color,
 					{
@@ -31,7 +31,7 @@
 			</span>
 			<span
 				class="strike"
-				v-for="s in strikes"
+				v-for="s in frames[step].strikes"
 				:class="{
 					open: s.open,
 					removed: s.removed
@@ -183,7 +183,7 @@
 	export default {
 		name: 'solution-ani',
 		props: {
-			expression: String,
+			equation: String,
 			keyframes: Array,
 			step: Number
 		},
@@ -191,49 +191,95 @@
 			return {
 				terms: [],
 				strikes: [],
+				frames: [],
 				aniLength: 700,
 				aniWait: 800,
 				fontSize: 24,
 				maxFont: 24
 			}
 		},
-		watch: {
-			step: function(newVal, oldVal) {
-				if (newVal > oldVal) {
-					this.animate(this.keyframes[this.step - 1]);
-				}
+		watch : {
+			step: function() {
+				setTimeout(() => this.scaleFont(), 2000);
 			}
 		},
+		created : function() {
+			this.addTermsFromString(this.equation);
+			this.frames.push({
+				wait: -1,
+				terms: [],
+				strikes: []
+			});
+			this.copyToFrameObject(0);
+			this.compileKeyframes();
+		},
 		mounted : function() {
-			this.addTermsFromString(this.expression);
 			this.scaleFont();
 		},
 		methods: {
-			// Creates term objects for a standard maths equation string
-			addTermsFromString(str, pos = 0, vPos = 0, color = 0) {
-				str = this.cleanEquation(str);
-				let terms = this.extractTerms(str);
-				
-				terms.forEach(t => {
-					t.color = color;
-					t.pos += pos;
-					t.vPos += vPos;
+			// Convert keyframe instructions input into frame state objects
+			compileKeyframes: function() {
+				for (let i = 0; i < this.keyframes.length; i++) {
+					for (let j = 0; j < this.keyframes[i].length; j++) {
+						// For every "w" wait instruction, split array to create multiple frames
+						if (j > 0 && this.keyframes[i][j][0] === 'w') {
+							let wait = this.keyframes[i][j].split(',')[1] || this.aniWait,
+									newA = this.keyframes[i].splice(j + 1);
+							this.keyframes[i].pop();
+							this.keyframes.splice(i + 1, 0, newA);
+							this.frames.push({
+								wait: wait,
+								terms: [],
+								strikes: []
+							});
+						} else if (j === this.keyframes[i].length - 1) {
+							this.frames.push({
+								wait: -1,
+								terms: [],
+								strikes: []
+							});
+						}
+					}
+				}
+				this.keyframes.forEach((fr, i) => {
+					this.implementFrames(fr);
+					this.copyToFrameObject(i + 1);
 				});
+			},
+			
+			// Copy current element layout to a frame state object
+			copyToFrameObject: function(pos) {
+				this.terms.forEach(t => {
+					this.frames[pos].terms.push({
+						value: t.value,
+						pos: t.pos,
+						vPos: t.vPos,
+						sup: t.sup,
+						color: t.color,
+						removed: t.removed,
+						z: t.z
+					});
+				});
+				this.strikes.forEach(s => {
+					this.frames[pos].strikes.push({
+						pos: s.pos,
+						vPos: s.vPos,
+						span: s.span,
+						vSpan: s.vSpan,
+						open: s.open,
+						removed: s.removed
+					});
+				});
+			},
+			
+			// Convert Math equation terms to term objects
+			addTermsFromString: function(str, pos = 0, vPos = 0, color = 0) {
+				str = str.replace(/\s/g, '').replace(/sqrt/g, '√');
 				
-				this.addTerms(terms);
-			},
-			
-			// Encode special characters
-			cleanEquation: function(str) {
-				return str.replace(/\s/g, '').replace(/sqrt/g, '√');
-			},
-			
-			// Pull term objects from string
-			extractTerms: function(str) {
 				let terms = [],
 						isSup = false,
-						pos = 0,
-						isDenom = 0
+						isDenom = 0;
+				// Extract each term
 				for(let i = 0; i < str.length; i++) {
 					// Powers
 					if (str[i] === '^') {
@@ -277,7 +323,9 @@
 						} else {
 							pos += center;
 						}
-					} else {
+					}
+					// All other terms
+					else {
 						terms.push({
 							value: str[i],
 							pos: pos,
@@ -296,10 +344,17 @@
 						pos++;
 					}
 				}
-				return terms;
+				
+				// Apply color and add base position defined in paramters
+				terms.forEach(t => {
+					t.color = color;
+					t.vPos += vPos;
+				});
+				
+				this.addTerms(terms);
 			},
 			
-			// Gets length of number, number with variables, or bracketed terms
+			// Gets length of a term unit (a single number, number with variable, bracketed terms)
 			getTermLength: function(str, start, reverse = false) {
 				let nest = 0,
 						endTerm = 0,
@@ -317,90 +372,62 @@
 			},
 			
 			// Interpret animation step as input string and perform
-			animate(steps) {
-				stageLoop:
-					for(let i = 0; i <= steps.length; i++) {
-						if (i === steps.length) {
-							if (this.step === this.keyframes.length) {
-								this.$emit('animationComplete')
-							} else {
-								this.$emit('stepComplete');
-							}
-						} else {
-							let params = steps[i].split(',');
-							switch (params[0]) {
-								// Wait
-								case 'w': {
-									let remainingSteps = steps.slice(i + 1);
-									setTimeout(() => this.$nextTick(() => {
-										this.animate(remainingSteps);
-									}), params[1] ? parseInt(params[1]) : this.aniWait);
-									break stageLoop;
-								}
-								// Add
-								case 'a': {
-									let pos = params[2].split('/');
-									this.addTermsFromString(params[1], parseInt(pos[0]), parseInt(pos[1] || 0), params[3]);
-									this.scaleFont();
-									break;
-								}
-								// Move
-								case 'm': {
-									let length = params[1].split(':')[1],
-											pos = params[1].split(':')[0].split('/'),
-											diff = parseInt(params[2].split('/')[0]),
-											vDiff = parseInt(params[2].split('/')[1] || 0),
-											terms = this.getTerms(
-												parseInt(pos[0]),
-												typeof length === 'undefined' ? length : parseInt(length),
-												typeof pos[1] === 'undefined' ? pos[1] : parseInt(pos[1]),
-												typeof length === 'undefined'
-											);
-									this.moveTerms(terms, diff, vDiff);
-									this.scaleFont();
-									break;
-								}
-								// Remove
-								case 'r': {
-									let pos = params[1].split('/');
-									let terms = this.getTerms(
+			implementFrames: function(steps) {
+				for(let i = 0; i < steps.length; i++) {
+					let params = steps[i].split(',');
+					switch (params[0]) {
+						// Add
+						case 'a': {
+							let pos = params[2].split('/');
+							this.addTermsFromString(params[1], parseInt(pos[0]), parseInt(pos[1] || 0), params[3]);
+							break;
+						}
+						// Move
+						case 'm': {
+							let length = params[1].split(':')[1],
+									pos = params[1].split(':')[0].split('/'),
+									diff = parseInt(params[2].split('/')[0]),
+									vDiff = parseInt(params[2].split('/')[1] || 0),
+									terms = this.getTerms(
 										parseInt(pos[0]),
-										parseInt(params[2]),
+										typeof length === 'undefined' ? length : parseInt(length),
 										typeof pos[1] === 'undefined' ? pos[1] : parseInt(pos[1]),
+										typeof length === 'undefined'
 									);
-									this.removeTerms(terms);
-									this.scaleFont();
-									break;
-								}
-								// Color
-								case 'c': {
-									let pos = params[1].split('/');
-									let terms = this.getTerms(
-										parseInt(pos[0]),
-										parseInt(params[2]),
-										typeof pos[1] === 'undefined' ? pos[1] : parseInt(pos[1])
-									);
-									this.colorTerms(terms, parseInt(params[3]));
-									break;
-								}
-								// Strike
-								case 's': {
-									this.strikes.push({
-										pos: parseInt(params[1].split('/')[0]),
-										vPos: parseInt(params[1].split('/')[1] || 0),
-										span: parseInt(params[2].split('/')[0]),
-										vSpan: parseInt(params[2].split('/')[1] || 1),
-										open: false,
-										removed: false
-									});
-									let strike = this.strikes[this.strikes.length - 1];
-									setTimeout(() => this.$nextTick(() => strike.open = true), 10);
-									break;
-								}
-							}
+							this.moveTerms(terms, diff, vDiff);
+							break;
+						}
+						// Remove
+						case 'r': {
+							let pos = params[1].split('/');
+							let terms = this.getTerms(
+								parseInt(pos[0]),
+								parseInt(params[2]),
+								typeof pos[1] === 'undefined' ? pos[1] : parseInt(pos[1]),
+							);
+							this.removeTerms(terms);
+							break;
+						}
+						// Color
+						case 'c': {
+							break;
+						}
+						// Strike
+						case 's': {
+							this.strikes.push({
+								pos: parseInt(params[1].split('/')[0]),
+								vPos: parseInt(params[1].split('/')[1] || 0),
+								span: parseInt(params[2].split('/')[0]),
+								vSpan: parseInt(params[2].split('/')[1] || 1),
+								open: false,
+								removed: false
+							});
+							let strike = this.strikes[this.strikes.length - 1];
+							setTimeout(() => this.$nextTick(() => strike.open = true), 10);
+							break;
 						}
 					}
-				// /stageLoop
+				}
 			},
 											
 			// Returns terms given position parameters
@@ -427,16 +454,14 @@
 				return terms;
 			},
 			
+			// Add term, and ajust existing terms to fit
 			addTerms: function(terms) {
 				this.getTerms(terms[0].pos, terms.length, terms[0].vPos, true)
 						.forEach(t => t.z -= terms.indexOf(t) === -1 ? 1 : 0);
-				terms.forEach(t => {
-					t.removed = true;
-					this.terms.push(t);
-					setTimeout(() => this.$nextTick(() => t.removed = false), this.aniLength / 2);
-				});
+				terms.forEach(t => this.terms.push(t));
 			},
 			
+			// Add term, and ajust existing terms to fit
 			moveTerms: function(terms, diff, vDiff) {
 				this.getTerms(terms[0].pos + diff, terms.length, terms[0].vPos + diff, true)
 						.forEach(t => t.z -= terms.indexOf(t) === -1 ? 1 : 0);
@@ -464,13 +489,12 @@
 				}), this.aniLength);
 			},
 			
-			colorTerms: function(terms, colorNum) {
-				terms.forEach(t => t.color = colorNum);
+			colorTerms: function(termList, colorNum) {
+				termList.forEach(t => this.terms[t].color = colorNum);
 			},
-
 			// Scales font down if current terms do not fit inside container
 			scaleFont: function() {
-				let expressWidth = this.terms.reduce((max, t) => t.pos > max ? t.pos : max, 0) + 3,
+				let expressWidth = this.frame[this.step].terms.reduce((max, t) => t.pos > max ? t.pos : max, 0) + 3,
 						scaledFont = Math.floor(this.$refs.container.clientWidth / expressWidth);
 				this.fontSize = Math.min(scaledFont, this.maxFont);
 			}

@@ -6,6 +6,7 @@
 body {
 		font-family: $f-prim;
 		font-size: 16px;
+		margin: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -25,10 +26,6 @@ h2 {
 		color: $c-prim;
 }
 
-article {
-	max-width: 600px;
-}
-
 p {
 	margin-bottom: 40px;
 	line-height: 22px;
@@ -36,15 +33,32 @@ p {
 }
 
 a {
-	color: $c-font;
 	text-decoration: none;
-	display: inline-block;
-	border-bottom: 2px solid $c-prim;
-	margin: 0 2px;
-	line-height: 18px;
+}
 
-	&:hover {
-		border-bottom-color: $c-sec;
+a {
+	text-decoration: none;
+
+	[class^="view-"] & {
+		position: relative;
+		color: $c-font;
+		display: inline-block;
+		margin: 0 2px;
+		line-height: 18px;
+
+		&:after {
+			content: '';
+			position: absolute;
+			bottom: -2px;
+			width: 100%;
+			border-bottom: 2px solid $c-prim;
+			transition: all 0.2s;
+		}
+
+		&:hover:after {
+			border-bottom: 4px solid $c-sec;
+			bottom: -4px;
+		}
 	}
 }
 
@@ -103,11 +117,16 @@ sup {
 $gutter: 15px;
 $colCount: 12;
 
-.contain {
+.contain, [class^="view-"] {
 	max-width: $break-max + $gutter;
 	min-width: $break-min;
 	margin: 0 auto;		
 	padding: 0 $gutter;
+}
+
+[class^="view-"] {
+	padding-top: 100px;
+	overflow: hidden;
 }
 
 .row {

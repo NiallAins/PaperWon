@@ -71,7 +71,11 @@
             border: 1px solid #ccc;
             margin: 1em 0;
             transition: all 0.1s;
-
+            
+            &:after {
+                content: unset;
+            }
+            
             &:hover {
                 padding: calc(2em - 1px);
                 padding-left: calc(4em - 1px);

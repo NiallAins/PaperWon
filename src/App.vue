@@ -8,9 +8,7 @@
         <router-link :to="'about'" class="push-right"> About Us </router-link>
       </nav>
     </header>
-    <div class="view-container contain">
-      <router-view />
-    </div>
+    <router-view />
   </div>
 </template>
 
@@ -46,6 +44,10 @@
     a {
       font-family: $f-sec;
       border-bottom: none;
+
+      &:hover {
+        opacity: 0.7;
+      }
     }
 
     a:not(.logo) {
@@ -54,8 +56,8 @@
       color: $c-font-l;
       font-weight: bold;
       padding: 0 20px;
-      font-size: 14px;
-      line-height: 50px;
+      font-size: 16px;
+      line-height: 70px;
       
       &:after {
         content: '';
@@ -78,9 +80,5 @@
         left: 0;
       }
     }
-  }
-
-  .view-container {
-    margin-top: 100px;
   }
 </style>
