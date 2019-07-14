@@ -212,6 +212,7 @@
 			});
 			this.copyToFrameObject(0);
 			this.compileKeyframes();
+			this.scaleFont();
 		},
 		mounted : function() {
 			this.scaleFont();
