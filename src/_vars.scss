@@ -5,14 +5,13 @@ $c-prim-l: lighten($c-prim, 10%);
 $c-sec: #9afad0;
 $c-sec-d: darken($c-sec, 10%);
 $c-sec-l: lighten($c-sec, 10%);
-$c-gray: #999;
-$c-font: #333;
-$c-font-l: #666;
-$c-shadow: #999;
+$c-border: #ccc;
+$c-font: black;
+$c-logo-gray: #999;
 
 // Fonts
 $f-prim: 'Roboto', sans-serif;
-$f-sec: 'Quattrocento', serif;
+$f-sec: 'Lora', serif;
 
 // Break Points
 $break-max: 1080px;
@@ -25,5 +24,5 @@ $e-bounce: cubic-bezier(.4,.3,0,2.5);
 
 // Misc
 @mixin shadow {
-    box-shadow: 5px 5px 5px 0 $c-shadow;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }

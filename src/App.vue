@@ -13,16 +13,13 @@
 </template>
 
 <style lang="scss">
-  @import './_vars';
-  @import './_global';
-
   header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     background: white;
-    box-shadow: 0 0 5px 0 $c-shadow;
+    @include shadow;
   }
 
   .logo {
@@ -32,7 +29,7 @@
     margin-right: 15px;
 
     span {
-      color: $c-gray;
+      color: $c-logo-gray;
       font-weight: normal;
       font-size: 15px;
       padding-left: 2px;
@@ -44,17 +41,12 @@
     a {
       font-family: $f-sec;
       border-bottom: none;
-
-      &:hover {
-        opacity: 0.7;
-      }
     }
 
     a:not(.logo) {
       position: relative;
       display: inline-block;
-      color: $c-font-l;
-      font-weight: bold;
+      color: $c-font;
       padding: 0 20px;
       font-size: 16px;
       line-height: 70px;

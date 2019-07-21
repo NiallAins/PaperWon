@@ -1,8 +1,8 @@
 {
     "naturalnumber": {
-      "def": "The set of Natural numbers. <br> These are all positive whole numbers: 1, 2, 3, 4...",
+      "def": "The set of Natural numbers. <br> These are all positive whole numbers.<br/><br/><i>Ex.</i> 1, 2, 3, 4...",
       "link": "/page",
-      "linkTitle": "More about Number Sets"
+      "linkTitle": "Learn more about Number Sets"
   },
   "realnumber" : {
       "def": "The set of Real numbers. <br/>These are all positive and negative numbers; including fractions, decimals and even numbers which cannot be expressed in these forms, such as Pi",
@@ -10,12 +10,12 @@
       "linkTitle": ""
   },
   "integernumber" : {
-      "def": "This denotes the set of Integer numbers. These are all whole positive and negative numbers: - 2, -1, 0, 1, 2",
+      "def": "This denotes the set of Integer numbers. These are all whole positive and negative numbers.<br/><br/><i>Ex.</i> - 2, -1, 0, 1, 2",
       "link": "",
       "linkTitle": ""
   },
   "rationalnumber": {
-      "def": "This denotes the set of Rational numbers. These are all positive and negative numbers which can be expressed as a fraction: -1/2, 0, 1, 5/7",
+      "def": "This denotes the set of Rational numbers. These are all positive and negative numbers which can be expressed as a fraction.<br/><br/><i>Ex.</i> -1/2, 0, 1, 5/7",
       "link": "",
       "linkTitle": ""
   },
@@ -23,6 +23,6 @@
       "def": "Multiple out all terms"
   },
   "coefficient": {
-      "def": "The number which an unknown term is being mulipled by. With 5x^2, 5 is the co-efficient of x^2"
+      "def": "The number which an unknown term is being mulipled by. <br/><br/> <i>Ex.</i> With 5x<sup>2</sup>, 5 is the coefficient of x<sup>2</sup>"
   }
 }

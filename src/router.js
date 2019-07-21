@@ -5,6 +5,7 @@ import Papers from '@/views/Papers';
 import About from '@/views/About';
 import Topics from '@/views/Topics';
 import ExamPaper from '@/views/ExamPaper';
+import ExamQuestion from '@/views/ExamQuestion';
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/papers/:year/:paper',
       name: 'exampaper',
       component: ExamPaper
+    },
+    {
+      path: '/papers/:year/:paper/:question/:part',
+      name: 'examquestion',
+      component: ExamQuestion
     },
     {
       path: '/topics',

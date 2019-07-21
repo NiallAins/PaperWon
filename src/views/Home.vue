@@ -160,16 +160,12 @@
 		margin-top: 0;
 		margin-left: 0;
 		margin-right: 0;
-		background-image: linear-gradient(
-			100deg,
-			dodgerblue,
-			#9afad0
-		);
+		background-image: linear-gradient(100deg, $c-prim, $c-sec);
 		
 		article {
 			background: white;
 			padding: 40px 50px;
-			box-shadow: 0 3px 10px 3px rgba(0, 0, 0, 0.2);
+			@include shadow;
 		}
 	}
 </style>

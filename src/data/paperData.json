@@ -1,0 +1,19 @@
+{
+  "2019": {
+    "h1": [
+      [
+        {
+          "label": "a",
+          "text": "In the expansion of (2<i>x</i> + 1)(<i>x</i><sup>2</sup> + <i>px</i> + 4), where <i>p</i> <span v-symbol>element</span> <def term=\"naturalnumber\"><span v-symbol>natural</span></def>, the <def term=\"coefficient\">coefficient</def> of x is twice the coefficient of <i>x</i><sup>2</sup>. Find the value of <i>p</i>."
+        },
+        {
+          "label": "b",
+          "text": "Solve the equation <span v-frac>3 / 2<i>x</i> + 1</span> + <span v-frac>2/5</span> = <span v-frac>2 / 3<i>x</i> - 1</span> where <i>x</i> <span v-symbol>notequal</span>-<span v-frac>1 / 2</span>, <span v-frac>1 / 3</span>, and <i>x</i> <span v-symbol>element</span> <span v-symbol>real</span>."
+        }
+      ]
+    ],
+    "h2": [
+      
+    ]
+  }
+}
