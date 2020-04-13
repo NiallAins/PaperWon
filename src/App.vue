@@ -1,22 +1,39 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    :class="{ 'keyboard-control': keyboardControl }"
+    @keyup="$event.key === 'Tab' ? keyboardControl = true : ''"
+    @mouseup="keyboardControl = false"
+  >
     <header>
       <nav class="contain">
         <router-link :to="'/'" class="logo"> Paper<span>Won</span> </router-link>
         <router-link :to="'papers'"> Papers </router-link>
         <router-link :to="'topics'"> Topics </router-link>
-        <router-link :to="'about'" class="push-right"> About Us </router-link>
+        <router-link :to="'about'" class="push-right"> About </router-link>
       </nav>
     </header>
-    <router-view />
+    <router-view></router-view>
   </div>
 </template>
+
+<script>
+  export default {
+    name: 'app',
+    data: function() {
+      return {
+        keyboardControl: false
+      }
+    }
+  }
+</script>
 
 <style lang="scss">
   header {
     position: fixed;
     top: 0;
     left: 0;
+    z-index: $z-header;
     width: 100%;
     background: white;
     @include shadow;
@@ -26,6 +43,7 @@
     color: $c-prim;
     font-size: 20px;
     font-weight: bold;
+    padding: 22px 10px;
     margin-right: 15px;
 
     span {

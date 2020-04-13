@@ -1,17 +1,46 @@
+// Layout
+$w-pad: 12px;
+$w-indent: 6px;
+$h-header: 70px;
+$br-sm: 4px;
+$br-lg: 8px;
+
+// Z-Indices
+$z-dropdown: 10;
+$z-sticker: 20;
+$z-header: 50;
+$z-modal: 100;
+$z-modal-bg: $z-modal - 1;
+
 // Colors
 $c-prim: dodgerblue;
 $c-prim-d: darken($c-prim, 10%);
+$c-prim-dd: darken($c-prim, 20%);
 $c-prim-l: lighten($c-prim, 10%);
-$c-sec: #9afad0;
-$c-sec-d: darken($c-sec, 10%);
-$c-sec-l: lighten($c-sec, 10%);
+$c-prim-comp: complement($c-prim);
+
+$c-highlight-1: $c-prim;
+$c-highlight-2: adjust-hue($c-prim-d, 270deg);
+$c-highlight-3: adjust-hue($c-prim, 90deg);
+$c-highlight-4: adjust-hue($c-prim, 180deg);
+$c-error: #e63d3d;
+
 $c-border: #ccc;
-$c-font: black;
+$c-bg: #fff;
+$c-bg-d: #f4f4f4;
+$c-font: #333;
+$c-font-l: #444;
 $c-logo-gray: #999;
 
 // Fonts
-$f-prim: 'Roboto', sans-serif;
+$f-prim: 'Open Sans', sans-serif;
 $f-sec: 'Lora', serif;
+$f-math: 'Courier New';
+$f-size: 16px;
+$f-size-lg: 20px;
+$f-size-xl: 32px;
+$f-size-sm: 14px;
+$f-height: 22px;
 
 // Break Points
 $break-max: 1080px;
@@ -21,8 +50,10 @@ $break-min: 360px;
 
 // Easings
 $e-bounce: cubic-bezier(.4,.3,0,2.5);
+$l-ani: 0.5s;
+$l-trans: 0.2s;
 
-// Misc
+// Element stylings
 @mixin shadow {
 	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
