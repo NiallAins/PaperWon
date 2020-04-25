@@ -1,338 +1,453 @@
 <template>
-	<div class="comp-grapher">
-		<input
-			type="text"
-			ref="functionInput"
-			value="x^3 + 5x - 7 = y"
-			@keyup.13="graphInput()"
-		/>
-		<div ref="canContain" class="canContain">
-			<canvas ref="canStatic"></canvas>
-			<canvas ref="can"></canvas>
+	<div
+		:class="['comp-grapher', {'on-paper': onpaper}]"
+		:style="{
+			'font-size': gridSize + 'px',
+			'height': canHeight + 'px'
+		}"
+	>
+		<div ref="graphContainer">
+			<canvas
+				ref="canvasStatic"
+				:width="canWidth"
+				:height="canHeight"
+			></canvas>
+			<canvas
+				ref="canvasDynamic"
+				:width="canWidth"
+				:height="canHeight"
+			></canvas>
+
+			<span
+				class="label"
+				v-for="l in axisLabels"
+				:class="l.class"
+				:style="{
+					'top': l.y + 'px',
+					'left': l.x + 'px',
+					'text-align': l.align || 'left'
+				}"
+				v-html="l.text"
+			></span>
+			<span v-for="line in graph.lines" v-if="line.path">
+				<span
+					:class="['label line', { 'hide': line.alpha === 0 }]"
+					:style="{
+						'top': line.label.y + 'px',
+						'left': line.label.x + 'px',
+						'color': line.col
+					}"
+				>{{ line.label.text }}(x)</span>
+				<span
+					v-if="line.labelPoints"
+					v-for="p in line.pts"
+					:class="['label point', { 'hide': p.alpha === 0 }]"
+					:style="{
+						'top': (p.y - 20)+ 'px',
+						'left': (p.x + 15) + 'px',
+						'color': line.col
+					}"
+				>{{ p.label }}</span>
+			</span>
 		</div>
 	</div>
 </template>
 
-<style scoped lang="scss">
-	input {
-		margin: 10px;
-		font-size: 16px;
-	}
-	.canContain {
-		position: relative;
-	}
-	canvas {
-		position: absolute;
-		left: 0;
-		top: 0;
-	}
-	[ref=canStatic] {
-		pointer-events: none;
-	}
-</style>
-
 <script>
+	import graphData from '@/data/graphs';
+	import Vue from 'vue';
+
 	export default {
 		name: 'grapher',
 		props: {
-			msg: String
+			questionref: String,
+			currentStep: Number,
+			onpaper: Boolean
 		},
 		data: function() {
 			return {
-				can: null,
-				canContain: null,
-				ctx: null,
-				cRad: 0,
-				fontBg: '13px "Times New Roman"',
-				fontSm: '13px "Times New Roman"',
-				mouse: {
-					x: 0,
-					y: 0,
-					press : false,
-					down: false,
-					up: false,
-					hover: false
-				},
-				grid: {
-					domain : {
-						x: [-5, 5],
-						y: [-5, 5],
-					},
-					tickFreq : 5,
-					scale : {},
-					phase : {}
-				},
-				curvePts: []
+				gridSize: 0,
+				canWidth: 10,
+				canHeight: 10,
+				ctxSt: null,
+				ctxDy: null,
+				axisLabels: [],
+				graph: {},
+				dynamicLines: [],
+				aniTimeout: 0
 			}
 		},
-		mounted : function() {
-			// Init canvas
-			this.can = this.$refs.can;
-			this.canContain = this.$refs.canContain;
-			this.ctx = this.can.getContext('2d');
-			this.cRad = this.canContain.clientWidth * 0.4;
-			this.can.width = this.can.height = this.cRad * 2;
-			this.ctx.translate(this.cRad + 0.5, this.cRad + 0.5);
-			this.ctx.font = this.fontSm;
+		created: function() {
+			// Consts
+			this.graph = JSON.parse(JSON.stringify(graphData[this.questionref]));
+			if (!this.graph) {
+				console.error('No graph found for question "' + this.questionRef + '"');
+			}
+		},
+		mounted: function() {
+			// Consts
+			// 	gridSize: component width / (boxes needed to draw xRange + 2 for line endings + 2 for padding (no padding for onpaper))
+			// 	canWidth: component width - 2 for padding (no padding for onpaper)
+			// 	canHeight: gridSize * (boxes need for yRange + 2 for line endings (2 for padding is covered by CSS))
+			this.gridSize =
+				this.$el.clientWidth / (
+					(this.onpaper ? 2 : 4) +
+					((this.graph.xRange[1] - this.graph.xRange[0]) / this.graph.xStep)
+				);
+			this.canWidth = Math.ceil(this.$el.clientWidth - (this.onpaper ? 0 : 2 * this.gridSize));
+			this.canHeight = Math.ceil(this.gridSize * (2 + ((this.graph.yRange[1] - this.graph.yRange[0]) / this.graph.yStep)));
+			this.FONTITALIC = 'italic 16px "PT serif"';
+			this.COLOR = ['#1e90ff', '#02ea00', '#fe1eff', '#ff8d1e'];
+			this.POINTRAD = this.onpaper ? 4 : 5;
+			this.ANISTEPLENGTH = 14;
+			this.FRAMELENGTH = 40;
+			
+			// Init Canvases
+			this.ctxSt = this.$refs.canvasStatic.getContext('2d');
+			this.ctxDy = this.$refs.canvasDynamic.getContext('2d');
 
-			// Init secondary static canvas
-			this.canSt = this.$refs.canStatic;
-			this.ctxSt = this.canSt.getContext('2d');
-			this.canSt.width = this.canSt.height = this.cRad * 2;
-			this.ctxSt.translate(this.cRad + 0.5, this.cRad + 0.5);
-
-			// Init mouse Listeners
-			this.can.onmousemove = (e) => {
-				this.mouse.x = e.clientX - this.cRad - this.canContain.offsetLeft;
-				this.mouse.y = e.clientY - this.cRad - this.canContain.offsetTop;
-				this.mouse.hover = true;
-			};
-			this.can.onmousedown = e => {
-				this.mouse.down = true;
-				this.mouse.press = true;
-			};
-			this.can.onmouseup = e => {
-				this.mouse.up = true;
-				this.mouse.press = false;
-			};
-			this.can.onmouseleave = e => {
-				this.mouse.up = true;
-				this.mouse.press = false;
-				this.mouse.hover = false;
-			};
-
-			this.updateGridTransforms();
-			this.refreshGraph();
+			this.$nextTick(() => {
+				this.drawAxis();
+				this.graph.lines = this.graph.lines.map((l, i) => this.toFormattedLine(l, i));
+				this.graph.lines
+					.filter(l => !l.step)
+					.forEach(l => this.drawLine(l, true));
+				this.dynamicLines = this.graph.lines.filter(l => l.step);
+			});
+		},
+		watch: {
+			currentStep: function(stepVal) {
+				this.animate();
+			}
 		},
 		methods: {
-			// Helper functions
-			format: function(n) {
-				return Math.round(n * 10) / 10;
+			// Screen Pixel to Graph Space transformation
+			toGridSpace: function(ctx) {
+				ctx.transform(
+					this.gridSize / this.graph.xStep,
+					0, 0,
+					this.gridSize / this.graph.yStep * -1,
+					0, ctx.canvas.height
+				);
+				ctx.translate(
+					-this.graph.xRange[0] + this.graph.xStep,
+					-this.graph.yRange[0] + this.graph.yStep
+				);
 			},
 
-			lineLength: function(pts) {
-				return pts.reduce((t, p, i, a) => {
-					if (i === 0) {
-						return 0;
-					} else {
-						return t + (
-							Math.pow(p.x - a[i - 1].x, 2) +
-							Math.pow(p.y - a[i - 1].y, 2)
-						);
+			// Value or Point to graph space
+			// 	(4, 'x' | 'y') => 4 in x-axis | y-axis graph space
+			// 	(4, 3) | ([4, 3]) | ({x: 4, y: 3}) => { x: 4 in graph space, y: 3 in grid space }
+			toPixel: function(val, axis) {
+				if (typeof axis === 'number') {
+					return {
+						x: this.toPixel(val, 'x'),
+						y: this.toPixel(axis, 'y')
 					}
-				}, 0);
-			},
+				} else if (typeof val === 'object') {
+					return {
+						x: this.toPixel(val.x || val[0], 'x'),
+						y: this.toPixel(val.y || val[1], 'y')
+					}
+				} else {
+					let offset = -1 * this.graph[axis + 'Range'][0],
+							gridScale = this.graph[axis + 'Step'];
+					let pixel = ((val + offset) * (this.gridSize / gridScale)) + this.gridSize;
 
-			// Function text input
-			graphInput: function() {
-				let value = this.$refs.functionInput.value;
-				this.curvePts = this.toCurvePoints(value);
-				if (this.curvePts) {
-					this.drawCurves(); 
+					return Math.round(axis === 'y' ? this.ctxSt.canvas.height - pixel : pixel);
 				}
 			},
+			
+			toFormattedLine: function(line, lIndex) {
+				// Interpolate
+				let tension = 0.6,
+						segments = 3,
+						_pts = line.pts.reduce((arr, p) => [...arr, p[0], p[1]], []);
+				_pts.unshift(line.pts[0][0], line.pts[0][1]);
+				_pts.push(line.pts[line.pts.length - 1][0], line.pts[line.pts.length - 1][1]);
 
-			//Gets scale and translation of grid co-ordiantes relatuve to canvas pixels
-			updateGridTransforms: function() {
-				this.grid.scale = {
-					x: (this.grid.domain.x[1] - this.grid.domain.x[0]) / 2,
-					y: (this.grid.domain.y[1] - this.grid.domain.y[0]) / 2
+				let path = [this.toPixel(line.pts[0])];
+				for (let i = 2; i < _pts.length - 4; i += 2) {
+					for (let t = 0; t <= segments; t++) {
+						let t1x = (_pts[i + 2] - _pts[i - 2]) * tension,
+								t2x = (_pts[i + 4] - _pts[i]) * tension,
+								t1y = (_pts[i + 3] - _pts[i - 1]) * tension,
+								t2y = (_pts[i + 5] - _pts[i + 1]) * tension,
+								st = t / segments,
+								c1 =   2 * Math.pow(st, 3)  - 3 * Math.pow(st, 2) + 1,
+								c2 = -(2 * Math.pow(st, 3)) + 3 * Math.pow(st, 2),
+								c3 =       Math.pow(st, 3)  - 2 * Math.pow(st, 2) + st, 
+								c4 =       Math.pow(st, 3)  -     Math.pow(st, 2),
+								x = c1 * _pts[i]			+ c2 * _pts[i + 2] + c3 * t1x + c4 * t2x,
+								y = c1 * _pts[i + 1]  + c2 * _pts[i + 3] + c3 * t1y + c4 * t2y;
+						path.push(this.toPixel(x, y));
+					}
+				}
+
+				let formattedLine = {
+					path: path,
+					col: this.onpaper ? '#000' : this.COLOR[lIndex],
+					step: line.step,
+					alpha: line.step ? 0 : 1,
+					labelPoints: !line.noPtsLabel
 				};
-				this.grid.phase = {
-					x: (this.grid.domain.x[1] + this.grid.domain.x[0]) / 2,
-					y: (this.grid.domain.y[1] + this.grid.domain.y[0]) / 2
-				};
+
+				if (line.label) {
+					let labeledPt = this.toPixel(line.pts[Math.floor(line.pts.length / 2)]);
+					formattedLine.label = {
+						x: labeledPt.x + 40,
+						y: labeledPt.y,
+						text: line.label
+					};
+				}
+
+				formattedLine.pts = line.pts.map(p => {
+					return {
+						x: this.toPixel(p[0], 'x'),
+						y: this.toPixel(p[1], 'y'),
+						label: `(${p[0]}, ${p[1]})`,
+						alpha: line.step ? 0 : 1
+					};
+				});
+
+				return formattedLine;
 			},
-
-			//Gets grid co-ordinate of canvas pixel
-			toGridDomain: function(canX, canY) {
-				return {
-					x: this.grid.phase.x + (this.grid.scale.x * (canX / this.cRad)),
-					y: (this.grid.phase.y + (this.grid.scale.y * (canY / this.cRad))) * -1
-				};
-			},
-
-			// Grid, Labels, Mouse Axis
+			
 			drawAxis: function() {
-				this.ctx.save();
-
-				// Primary Axis
-				this.ctx.beginPath();
-					this.ctx.strokeStyle = '#333';
-					this.ctx.moveTo(-this.cRad, 0);
-					this.ctx.lineTo(this.cRad, 0);
-					this.ctx.moveTo(0, -this.cRad);
-					this.ctx.lineTo(0, this.cRad);
-				this.ctx.stroke();
+				let c = this.ctxSt;
 				
-				// Grid & Labels
-				this.ctx.fillStyle = this.mouse.hover ? '#bbb' : '#333';
-				this.ctx.strokeStyle = '#ddd';
-				let tickSpacing = this.cRad / this.grid.tickFreq;
-				for (let tick = -this.cRad + tickSpacing; tick < this.cRad; tick += tickSpacing) {
-					let label = this.toGridDomain(tick, tick);
-					if (Math.abs(tick) > 0.01) {
-						this.ctx.beginPath();
-							this.ctx.moveTo(-this.cRad, tick);
-							this.ctx.lineTo(this.cRad, tick);
-							this.ctx.moveTo(tick, -this.cRad);
-							this.ctx.lineTo(tick, this.cRad);
-						this.ctx.stroke();
-						this.ctx.textAlign = 'center';
-						this.ctx.fillText(this.format(label.x), tick, 13);
-						this.ctx.textAlign = 'right';
-						this.ctx.fillText(this.format(label.y), -4, tick + 3);
-					}
-				}
+				// Axis
+				c.save();
+					c.beginPath();
+					this.toGridSpace(c);
+					c.moveTo(this.graph.xRange[0] - (this.graph.xStep / 2), 0);
+					c.lineTo(this.graph.xRange[1] + (this.graph.xStep / 2), 0);
+					c.moveTo(0, this.graph.yRange[0] - (this.graph.yStep / 2));
+					c.lineTo(0, this.graph.yRange[1] + (this.graph.yStep / 2));
+				c.restore();
+				c.stroke();
 				
-				// Mouse Axis & Labels
-				if (this.mouse.hover) {
-					let label = this.toGridDomain(this.mouse.x, this.mouse.y);
-					this.ctx.strokeStyle = '#777';
-					this.ctx.setLineDash([2]);
-					this.ctx.beginPath();
-						this.ctx.moveTo(0, this.mouse.y);
-						this.ctx.lineTo(this.mouse.x, this.mouse.y);
-						this.ctx.moveTo(this.mouse.x, 0);
-						this.ctx.lineTo(this.mouse.x, this.mouse.y);
-					this.ctx.stroke();
-					
-					// X-Axis
-					this.ctx.font = this.fontBg;
-					this.ctx.save();
-						if (this.mouse.y < 0) {
-							this.ctx.translate(0, 20);
+				// X Ticks
+				let xTrans = this.gridSize,
+						yTrans = this.toPixel(0, 'y'),
+						numTicks = (this.graph.xRange[1] - this.graph.xRange[0]) / (this.graph.xStep * this.graph.xLabelInc);
+				c.font = this.FONTITALIC;
+				c.beginPath();
+					for (let i = 0; i <= numTicks; i++) {
+						let label = this.graph.xRange[0] + (i * this.graph.xStep * this.graph.xLabelInc);
+						if (label !== 0) {
+							c.moveTo(xTrans, yTrans - 5);
+							c.lineTo(xTrans, yTrans + 5);
+							this.axisLabels.push({
+								x: xTrans,
+								y: yTrans + 16,
+								text: label,
+								align: 'center'
+							});
 						}
-						this.ctx.fillStyle = '#fff';
-						this.ctx.fillRect(this.mouse.x - 22, -18, 44, 14);
-						this.ctx.fillStyle = '#333';
-						this.ctx.textAlign = 'center';
-						this.ctx.fillText((label.x).toFixed(1), this.mouse.x, -8);
-					this.ctx.restore();
-					
-					// Y-Axis
-					this.ctx.fillStyle = '#fff';
-					if (this.mouse.x < 0) {
-						this.ctx.fillRect(6, this.mouse.y - 12, 42, 24);
-						this.ctx.textAlign = 'left';
-						this.ctx.translate(14, 0);
+						xTrans += this.gridSize * this.graph.xLabelInc;
+					}
+				c.stroke();
+				// X Line Ending
+				xTrans -= (this.gridSize * this.graph.xLabelInc) - (this.gridSize / 2);
+				c.beginPath();
+					c.lineTo(xTrans, yTrans - 5);
+					c.lineTo(xTrans + 10, yTrans);
+					c.lineTo(xTrans, yTrans+ 5);
+				c.fill();
+				c.fillText('x', xTrans, yTrans - 10);
+				
+				// Y Line Ending
+				xTrans = this.toPixel(0, 'x');
+				yTrans = this.gridSize / 2;
+				c.beginPath();
+					c.lineTo(xTrans - 5, yTrans);
+					c.lineTo(xTrans, yTrans - 10);
+					c.lineTo(xTrans + 5, yTrans);
+				c.fill();
+				c.fillText('y', xTrans + 14, yTrans);
+				// Y Ticks
+				yTrans += this.gridSize / 2;
+				numTicks = (this.graph.yRange[1] - this.graph.yRange[0]) / (this.graph.yStep * this.graph.yLabelInc);
+				c.beginPath();
+					for (let i = 0; i <= numTicks; i++) {
+						let label = this.graph.yRange[1] - (i * this.graph.yStep * this.graph.yLabelInc);
+						if (label !== 0) {
+							c.moveTo(xTrans - 5, yTrans);
+							c.lineTo(xTrans + 5, yTrans);
+							this.axisLabels.push({
+								x: xTrans - 30,
+								y: yTrans,
+								text: label,
+								align: 'right'
+							});
+						}
+						yTrans += this.gridSize * this.graph.yLabelInc
+					}
+				c.stroke();
+			},
+			
+			drawLine: function(line, isStatic = false) {
+				let c = isStatic ? this.ctxSt : this.ctxDy;
+				c.save();
+					// Line
+					c.beginPath();
+						line.path.forEach(p => {
+							c.lineTo(p.x, p.y)
+						});
+					c.strokeStyle = line.col;
+					c.fillStyle = line.col;
+					c.globalAlpha = line.alpha;
+					c.stroke();
+
+					// Points
+					c.strokeStyle = '#fff';
+					c.lineWidth = 2;
+					line.pts.forEach(p => {
+						c.beginPath();
+							c.arc(p.x, p.y, this.POINTRAD, 0, Math.PI * 2);
+							c.globalAlpha = p.alpha;
+						c.fill();
+						c.stroke();
+					});
+				c.restore();
+			},
+
+			animate: function(frame, lines, aniData) {
+				if (!frame) {
+					clearTimeout(this.aniTimeout);
+					lines = [];
+					aniData = {
+						length: 1,
+						lineStart: [],
+					};
+					let lineStartOffset = 0;
+					this.dynamicLines.forEach(l => {
+						l.alpha = 0;
+						l.pts.forEach(p => p.alpha = 0)
+					});
+					this.dynamicLines
+						.filter(l => l.step <= this.currentStep && (!l.endStep || l.endStep > this.currentStep))
+						.forEach((l, lIndex) => {
+							if (l.step === this.currentStep) {
+								aniData.length += l.pts.length + 1;
+								aniData.lineStart[lIndex] = lineStartOffset;
+								lineStartOffset++;
+							} else {
+								aniData.lineStart[lIndex] = -1;
+							}
+							lines.push(l);
+						});
+					if (lines.length == 0) {
+						this.ctxDy.clearRect(0, 0, this.ctxDy.canvas.width, this.ctxDy.canvas.height);
+						this.dynamicLines.forEach(l => this.drawLine(l));
 					} else {
-						this.ctx.textAlign = 'right';
-						this.ctx.fillRect(-2, this.mouse.y - 12, -42, 24);
+						this.aniTimeout = setTimeout(() => {
+							this.animate(1, lines, aniData)
+						}, this.ANISTEPLENGTH * this.FRAMELENGTH);
 					}
-					this.ctx.fillStyle = '#333';
-					this.ctx.fillText((label.y).toFixed(1), -4, this.mouse.y + 2);
-					this.ctx.font = this.fontSm;
-				}
-				
-				this.ctx.restore();
-			}, 
+				} else {
+					this.ctxDy.clearRect(0, 0, this.ctxDy.canvas.width, this.ctxDy.canvas.height);
+					let aniStep = frame / this.ANISTEPLENGTH,
+							alpha = Math.ceil(-100 * ((Math.cos(Math.PI * (aniStep % 1)) - 1) / 2)) / 100;
 
-			// Gets points of curve defined by math fucntion
-			toCurvePoints: function(input) {
-				// Test Validity
-				input = input.replace(/ /g,'');
-				if (!input.match(/^[^=]+=[^=]+$/)) {
-					return;
-				}
-				// Convert Math to JS Code
-				input = input
-					.replace(/(-?[0-9.]+|\(.+?\))(x|y)/g, '($1*$2)')
-					.replace(/(\(.+?\)|[0-9.xy]+)\^(-?([0-9.xy]+))/g, 'Math.pow($1,$2)')
-					.replace(/(a?(sin|cos|tan))/g, 'Math.$1');
-				// Convert "x = y" to "abs(x - y) <= 1px"
-				input =
-					('Math.abs((' + input.replace('=', ')-(') + '))<=' + (this.grid.scale.x / (this.cRad * 2)))
-					.replace(/x/g, 'pt.x')
-					.replace(/y/g, 'pt.y');
-				// Test Validity
-				try {
-					eval(input.replace(/pt\.[xy]/g, '0'));
-				} catch {
-					return;
-				}
-				
-				let pts = [], pt;
-				//Get Roots
-				// for (let canX = -this.cRad; canX <= this.cRad; canX++) {
-				// 	pt = this.toGridDomain(canX, 0);
-				// 	if (eval(input)) {
-				// 		pts.push({x: canX, y: 0});
-				// 	}
-				// }
-				// for (let canY = -this.cRad; canY <= this.cRad; canY++) {
-				// 	pt = this.toGridDomain(0, canY);
-				// 	if (eval(input)) {
-				// 		pts.push({x: 0, y: canY});
-				// 	}
-				// }
-				// Get all other points on curve
-				let c = 0;
-				for (let canX = -this.cRad; canX <= this.cRad; canX++) {
-					for (let canY = -this.cRad; canY <= this.cRad; canY++) {
-						pt = this.toGridDomain(canX, canY);
-						c++;
-						if (eval(input)) {
-							pts.push({x: canX, y: canY});
+					lines.forEach((l, i) => {
+						let start = aniData.lineStart[i];
+						if (start === -1 && aniStep <= 1) {
+							l.alpha = alpha;
+							l.pts.forEach(p => {
+								p.alpha = alpha;
+							});
+						} else {
+							let end = start + l.pts.length + 1;
+							if (aniStep >= start && aniStep < end) {
+								let p = Math.floor(aniStep - start);
+								if (l.pts[p]) {
+									l.pts[p].alpha = alpha;
+								} else {
+									l.alpha = alpha;
+								}
+							}
 						}
+					});
+
+					lines.forEach(l => this.drawLine(l));
+
+					if (frame < this.ANISTEPLENGTH * aniData.length) {
+						this.aniTimeout = setTimeout(() => {
+							this.animate(frame + 1, lines, aniData);
+						}, this.FRAMELENGTH);
+					} else {
+						this.$emit('stepend', this.currentStep)
 					}
 				}
-				console.log('hey');
-				console.log(c);
+			},
+		}
+	};
+</script>
+
+<style scoped lang="scss">
+	.comp-grapher {
+		border: 1px solid $c-border;
+		color: $c-font;
+		font-family: $f-math;
+		padding: 1em;
+		background:
+			linear-gradient($c-border, transparent 1px),
+			linear-gradient(90deg, $c-border, transparent 1px);
+		background-size: 1em 1em;
+
+		&.on-paper {
+			padding: 0;
+			border-width: 0 1px 1px 0;
+		}
+
+		&>div {
+			position: relative;
+			
+			canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
 				
-				// Order points in line
-				let dis = this.lineLength(pts);
-				pts.sort((a, b) => a.y - b.y);
-				let vertDis = this.lineLength(pts);
-				if (dis < vertDis) {
-					pts.sort((a, b) => a.x - b.x);
+				&:nth-child(1) {
+					z-index: 1;
 				}
-				
-				// if (pts.length > 1) {
-				// 	// Extrapolate curve ends to extend beyond grid
-				// 	let startAng = Math.atan2(
-				// 		pts[0].y - pts[1].y,
-				// 		pts[0].x - pts[1].x
-				// 	);
-				// 	pts.unshift({
-				// 		x: pts[0].x + (Math.cos(startAng) * 1000),
-				// 		y: pts[0].y + (Math.sin(startAng) * 1000)
-				// 	});
-				// 	let lastPt = pts.length - 1,
-				// 			endAng = Math.atan2(
-				// 				pts[lastPt].y - pts[lastPt - 1].y,
-				// 				pts[lastPt].x - pts[lastPt - 1].x
-				// 			);
-				// 	pts.push({
-				// 		x: pts[lastPt].x + (Math.cos(endAng) * 1000),
-				// 		y: pts[lastPt].y + (Math.sin(endAng) * 1000)
-				// 	});
-						
-					return pts;
-				//}
-			},
+				&:nth-child(2) {
+					z-index: 2;
+				}
+			}
 
-			// Draw curves to static canvas
-			drawCurves: function() {
-				this.ctxSt.clearRect(-this.cRad - 1, -this.cRad - 1, this.cRad * 3, this.cRad * 3);
-				this.ctxSt.beginPath();
-					this.curvePts.forEach(p => this.ctxSt.lineTo(p.x, p.y));
-				this.ctxSt.strokeStyle = 'dodgerblue';
-				this.ctxSt.lineWidth = 2;
-				this.ctxSt.stroke();
-			},
+			.label {
+				position: absolute;
+				font-size: $f-size-sm;
+				z-index: 3;
+				height: 1em;
+				width: 36px;
+				line-height: 12px;
+				transform: translate(-18px, -6px);
+				opacity: 1;
+				transition: opacity $l-ani ease;
 
-			// Animation loop
-			refreshGraph: function() {
-				this.ctx.clearRect(-this.cRad - 1, -this.cRad - 1, this.cRad * 3, this.cRad * 3);
+				&.line, &.point {
+					background: transparentize($c-bg, 0.3);
+				}
 
-				this.drawAxis();
-				
-				this.mouse.up = false;
-				this.mouse.down = false;
-				
-				window.requestAnimationFrame(this.refreshGraph);
+				&.line {
+					font-size: $f-size-lg;
+				}
+
+				&.point {
+					text-align: right;
+					font-size: $f-size-md;
+					white-space: nowrap;
+				}
+
+				&.line.hide,
+				&.point.hide {
+					opacity: 0;
+				}
 			}
 		}
 	}
-</script>
+</style>

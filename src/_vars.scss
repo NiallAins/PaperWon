@@ -25,25 +25,34 @@ $c-highlight-3: adjust-hue($c-prim, 90deg);
 $c-highlight-4: adjust-hue($c-prim, 180deg);
 $c-error: #e63d3d;
 
-$c-border: #ccc;
+$c-logo-gray: #999;
 $c-bg: #fff;
 $c-bg-d: #f4f4f4;
+$c-bg-dd: #ccc;
 $c-font: #333;
-$c-font-l: #444;
-$c-logo-gray: #999;
+$c-font-l: #888;
+$c-font-exam: #000;
+$c-border: #ccc;
+$c-shadow: #0003;
 
 // Fonts
-$f-prim: 'Open Sans', sans-serif;
+$f-prim: 'Open Sans', 'M PLUS Rounded 1c', sans-serif;
 $f-sec: 'Lora', serif;
-$f-math: 'Courier New';
-$f-size: 16px;
-$f-size-lg: 20px;
-$f-size-xl: 32px;
-$f-size-sm: 14px;
-$f-height: 22px;
+$f-italic: 'PT serif';
+$f-math: 'Roboto Slab';
+$f-size-base: 16px;
+$f-size-base-lg: 1.4rem;
+$f-size-xs: 0.7rem;
+$f-size-sm: 0.875rem;
+$f-size-md: 1rem;
+$f-size-lg: 1.25rem;
+$f-size-title: 1.5rem;
+$f-size-title-exam: 36px;
+$f-size-splash: 32px;
+$f-height: 1.38;
 
 // Break Points
-$break-max: 1080px;
+$break-max: 1076px;
 $break-md: 960px;
 $break-sm: 780px;
 $break-min: 360px;
@@ -51,9 +60,16 @@ $break-min: 360px;
 // Easings
 $e-bounce: cubic-bezier(.4,.3,0,2.5);
 $l-ani: 0.5s;
+$l-ani-slow: 1s;
 $l-trans: 0.2s;
 
 // Element stylings
 @mixin shadow {
-	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 3px 10px $c-shadow;
+}
+@mixin shadow_sm {
+	box-shadow: 0 2px 5px $c-shadow;
+}
+@mixin shadow_sm_raise {
+	box-shadow: 0 5px 10px $c-shadow;
 }

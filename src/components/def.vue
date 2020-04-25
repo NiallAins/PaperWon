@@ -6,19 +6,43 @@
 		<div
 			class="def-box"
 			:class="{
-				'has-link': $options.termObj.link
+				'has-link': termObj.link
 			}"
-			v-html="$options.termObj.def"
 		>
+			<render-html>
+				{{ termObj.def }}
+				<span v-if="termObj.example" class="example">
+					<i class="sans">Ex.</i> {{ term.example }}
+				</span>
+			</render-html>
 		  <router-link
-			  v-if="$options.termObj.link"
-			  :to="$options.termObj.link"
+			  v-if="termObj.link"
+			  :to="termObj.link[0]"
+				class="link-small"
 		  >
-			  {{ $options.termObj.linkTitle }}
+			  {{ termObj.link[1] }}<i class="icon-next"></i>
 		  </router-link>
 		</div>
 	</span>
 </template>
+
+<script>
+	import definitions from '@/data/definitions';
+	import renderHtml from '@/components/render-html';
+
+	export default {
+		name: 'def',
+		components: {
+			'render-html': renderHtml,
+		},
+		props: {
+			term: String
+		},
+		created: function() {
+		  this.termObj = definitions[this.term] || { def: 'No Definition Found.' };
+		}
+	};
+</script>
 
 <style scoped lang="scss">
 	.hide-def .comp-def {
@@ -34,9 +58,10 @@
 	.comp-def {
 		position: relative;
 		
-		span {
+		&>span {
 			position: relative;
-			z-index: 5;
+			z-index: $z-dropdown - 1;
+			transition: color $l-trans ease $l-ani;
 		}
 		
 		&:before {
@@ -45,39 +70,42 @@
 			left: -3px; 
 			top: -5px;
 			bottom: -4px;
-			z-index: 5;
+			z-index: $z-dropdown - 1;
 			width: calc(100% + 6px);
-			border-bottom: 3px solid dodgerblue;
+			border-bottom: 3px solid $c-prim;
 			border-radius: 5px;
-			transition: all 0.2s;
+			transition:
+				width $l-trans ease $l-ani,
+				visibility $l-trans ease $l-ani,
+				left $l-trans ease $l-ani,
+				border-radius $l-trans ease $l-ani,
+				background-color $l-trans ease $l-ani;
 		}
 
 		&:hover {
-			span {
-				color: white;
-				cursor: default;
-				transition: color 0.2s;
+			&>span {
+				color: $c-bg;
+				z-index: $z-dropdown;
+				transition: none;
+				cursor: none;
 			}
 			
 			&:before {
 				left: -10px;
+				z-index: $z-dropdown;
 				visibility: visible;
 				width: calc(100% + 20px);
 				border-radius: 5px 5px 0 0;
-				background-color: dodgerblue;
+				background-color: $c-prim;
 				transition:
-					all 0.2s ease-out 0.7s,
-					background-color 0.2s;
+					all $l-trans ease $l-ani,
+					background-color $l-trans;
 			}
 			
 			.def-box {
 				left: -10px;
 				visibility: visible;
 				opacity: 1;
-				transition:
-					opacity 0.2s ease-out 0.7s,
-					left 0.2s ease-out 0.7s,
-					visibility 0s linear 0.7s;
 				@include shadow;
 			}
 		}
@@ -85,8 +113,8 @@
 		.def-box {
 			position: absolute;
 			left: 0px;
-			top: calc(1em + 7px);
-			z-index: 4;
+			top: calc(1em + 10px);
+			z-index: $z-dropdown;
 			visibility: hidden;
 			opacity: 0;
 			width: 200px;
@@ -94,6 +122,11 @@
 			border: 1px solid $c-border;
 			font-size: 0.9em;
 			background: white;
+			transition:
+				box-shadow $l-trans ease $l-ani,
+				opacity $l-trans ease $l-ani,
+				left $l-trans ease $l-ani,
+				visibility 0s linear $l-ani;
 
 			&.has-link {
 				padding-bottom: 40px;
@@ -103,24 +136,11 @@
 				position: absolute;
 				right: 10px;
 				bottom: 10px;
-				font-size: 0.9em;
-				color: $c-prim;
+			}
+
+			.exmaple {
+				padding-top: $w-pad;
 			}
 		}
 	}
 </style>
-
-<script>
-	import definitions from '@/data/definitions';
-
-	export default {
-		name: 'def',
-		props: {
-			term: String
-		},
-		termObj: null,
-		created: function() {
-		  this.$options.termObj = definitions[this.term] || { def: 'No Definition Found.' };
-		}
-	};
-</script>

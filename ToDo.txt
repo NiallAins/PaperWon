@@ -1,0 +1,9 @@
+StepAni
+  - Copy
+  - Speed
+Papers
+  - Style list
+ExamPaper
+  - Highlist current question
+  - Scroll To question
+  - Small screen contents

@@ -1,11 +1,11 @@
 <template>
-    <div class="view-about">
-        <h1> About Page </h1>
-    </div>
+	<div class="view-about">
+		<h2> About Page </h2>
+	</div>
 </template>
 
 <script>
-export default {
-    name: 'about'
-}
+	export default {
+		name: 'about'
+	}
 </script>

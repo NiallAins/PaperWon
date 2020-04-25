@@ -1,0 +1,41 @@
+{
+  "2019-h1-1-1-1": [
+    ["State the expression"],
+    ["Expand the expression", "Multiple out the brackets"],
+    ["Add the like terms"],
+    ["Set the coefficient of <i>x</i> equal to 2 times the coefficient of <i>x</i><sup>2</sup>, as stated in the question"],
+    ["Rearrange the terms to calculate the value of <i>p</i>"]
+  ],
+  "2019-h1-1-1-2": [
+    ["State the expression"],
+    [
+      "Find a Common Multiple",
+      "The easiest way to generate a Common Multiple for a set of fractions, is to mutliple together their numerators"
+    ],
+    [
+      "Multiply each fraction by the Common Multiple",
+      "After multiplying, the numerator of each fraction cancels out with one of the terms of the Common Multiple"
+    ],
+    ["Multiply out the brackets, and combine like terms"],
+    ["Simplify the equation", "Notice that each is a multiple of 3, so we can divide by 3 to simplify."],
+    ["Factorise and solve", "<a href=''>Learn More about factorisation...</a>"]
+  ],
+  "2019-h1-1-2-1": [
+    ["Use the function <i>g</i>(<i>x</i>) to calculate values for <i>y</i>"],
+    ["Substitute values of <i>x</i> into <i>g</i>(<i>x</i>) to create several new equations"],
+    ["Calculate the value of y for each equation"],
+    ["Draw each pair of <i>x</i> and <i>y</i> values as points on the graph <br/> Connect these points to graph the line <i>g</i>(<i>x</i>)"]
+  ],
+  "2019-h1-1-2-2": [
+    [
+      "Substitute in the equations <i>f</i>(<i>x</i>) and <i>g</i>(<i>x</i>)",
+      "Substitute the equations into the <def term=\"inequality\">inequality</def> stated in the question."
+    ],
+    [
+      "Substitute the value <i>x</i> = 1.9 into the inequality."
+    ],
+    [
+      "Compute the value of each side of the inequality to verfiy the statement in the question."
+    ]
+  ]
+}

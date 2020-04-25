@@ -1,19 +1,21 @@
 <template>
 	<div
-		:class="['comp-solution-ani', { 'animation-off': animationOff }]"
-		:style="{ 'font-size': fontSize + 'px' }"
+		class="comp-solution-ani"
 		@keyup="keyListener($event)"
 		@keydown="$event.keyCode === 16 ? shiftDown = true : ''"
 		:tabindex="editing ? 0 : -1"
 	>
-		<div class="equation-bg">
+		<div
+			:class="[
+				'equation-bg', { 
+				'animation-off': animationOff,
+				'frame-slow': frameSlow
+			}]"
+			:style="{ 'font-size': fontSize + 'px' }"
+		>
 			<div
 				:class="['equation-contain', { 'editing': editing	}]"
 				:style="{ 'height': height + 'px' }"
-				ondragover="
-					event.preventDefault();
-					event.dataTransfer.dropEffect = 'move';
-				"
 			>
 				<span
 					v-for="(term, i) in aniObject[step][frame]"
@@ -32,25 +34,34 @@
 					:style="{
 						'top': term.y + 'em',
 						'left': term.x + 'em',
-						'width': (term.length || 1) + 'em'
+						'width': (term.length || 1) + 'em',
+						'font-size': fontSize + 'px'
 					}"
 					@mousedown="selectTerm(i)"
-					:draggable="editing"
-					dragstart="event.dataTransfer.effectAllowed = 'move'"
-					@dragend="moveTerm($event)"
 				>
 					{{ term.value || '' }}
 				</span>
 			</div>
+
+			<div class="buttons" v-if="!demo">
+				<button
+					class="secondary"
+					:disabled="aniObject[step].length === 1"
+					@click="replayStep()"> Replay </button>
+				<button
+					:class="['secondary', {'active': frameSlow }]"
+					@click="frameSlow = !frameSlow"
+				> Slow </button>
+			</div>
 		</div>
 		
-		<div v-if="!hideedit">
-		<br/>
-		<button @click="editing = !editing"> Toggle Edit Mode </button>
+		<div v-if="showedit">
+			<br/>
+			<button @click="editing = !editing"> Toggle Edit Mode </button>
 		</div>
 		<div class="controls" v-if="editing">
 			<div>
-				<button @click="console.log(encodeAnimation())"> Log AniObject </button>
+				<button @click="encodeAnimation(aniObject, true)"> Log AniObject </button>
 			</div>
 			<div>
 				<button
@@ -118,7 +129,7 @@
 						Color
 						<span
 							v-for="i in this.COLORS"
-							@click="editTerm('color', i)"
+							@click="editTerm('color', i - 1)"
 						></span>
 					</div>
 					<div>
@@ -143,212 +154,30 @@
 	</div>
 </template>
 
-<style scoped lang="scss">
-	$c-strike: $c-error;
-
-	.comp-solution-ani {
-		transition: font-size $l-ani;
-
-		&.animation-off,
-		&.animation-off .term {
-			transition: none;
-		}
-		
-		&:focus {
-			outline: none;
-		}
-	}
-
-	.equation-bg {
-		font-family: $f-math;
-		color: $c-font-l;
-		padding: 1em;
-		border: 1px solid $c-border;
-		background:
-			linear-gradient($c-border, transparent 1px),
-			linear-gradient(90deg, $c-border, transparent 1px);
-		background-size: 1em 1em;
-	}
-
-	.equation-contain {
-		position: relative;
-		white-space: nowrap;
-		width: 100%;
-		
-		table {
-			border: none;
-		}
-	}
-
-	.term {
-		position: absolute;
-		z-index: 1;
-		display: inline-block;
-		height: 1em;
-		text-align: center;
-		color: $c-font-l;
-		font-weight: bold;
-		opacity: 1;
-		transition: 
-			top $l-ani,
-			left $l-ani,
-			color $l-ani,
-			width $l-ani,
-			opacity $l-ani,
-			font-size $l-ani;
-
-		&.color-1 { color: $c-highlight-1; }
-		&.color-2 { color: $c-highlight-2; }
-		&.color-3 { color: $c-highlight-3; } 
-		&.color-4 { color: $c-highlight-4; }
-		$strike-fade: 20%;
-		&.strike         { color: lighten($c-font-l, $strike-fade); }
-		&.color-1.strike { color: lighten($c-highlight-1, $strike-fade); }
-		&.color-2.strike { color: lighten($c-highlight-2, $strike-fade); }
-		&.color-3.strike { color: lighten($c-highlight-3, $strike-fade); } 
-		&.color-4.strike { color: lighten($c-highlight-4, $strike-fade); }
-		
-		&.bar:after {
-			content: '';
-			position: absolute;
-			top: calc(50% - 1px);
-			right: -1px;
-			left: -1px;
-			height: 2px;
-			border-radius: 2px;
-			background: $c-font-l;
-		}
-		
-		&.sub   { transform: scale(0.7) translate(-40%,  35%); }
-		&.sup   { transform: scale(0.7) translate(-40%, -35%); }
-		&.sub-r { transform: scale(0.7) translate( 40%,  35%); }
-		&.sup-r { transform: scale(0.7) translate( 40%, -35%); }
-		
-		&.strike:after {
-			content: '';
-			position: absolute;
-			top: calc(50% - 1px);
-			left: -1px;
-			right: -1px;
-			z-index: 1;
-			height: 2px;
-			border-radius: 2px;
-			background: $c-strike;
-		}
-		&.sub.strike:after,
-		&.sup.strike:after, 
-		&.sub-r.strike:after,
-		&.sup-r.strike:after {
-			content: unset;
-		}
-		
-		&.hidden,
-		&.hidden.bar:after {
-			opacity: 0;
-			z-index: 0;
-			pointer-events: none;
-		}
-	}
-
-	.equation-contain.editing {
-		border-color: $c-prim;
-		
-		.term {
-			user-select: none;
-			transition-duration: 0.1s;
-			cursor: pointer;
-			
-			&:hover {
-				outline: 1px solid $c-prim;
-				outline-offset: -2px;
-			}
-			
-			&.selected {
-				background: transparentize($c-prim, 0.8);
-			}
-				
-			&.hidden.show-edit {
-				display: inline-block;
-				pointer-events: all;
-				opacity: 0.3;
-				
-				&:after {
-					opacity: 0.3;
-				}
-			}
-		}
-	}
-
-	.controls {
-		&>div {
-			margin-top: 5px;
-		}
-		
-		.edit-term {
-			margin-top: 10px;
-			
-			div {
-				margin-top: 10px;
-			}
-			
-			&>div:not(:first-child) {
-				padding-left: 10px;
-			}
-		}
-		
-		input[type=text],
-		input[type=number] {
-			width: 2em;
-			padding: 3px;
-			margin-left: 5px;
-		}
-		
-		.colour-select span {
-			display: inline-block;
-			padding: 10px;
-			border-radius: 100%;
-			margin: 2px;
-			vertical-align: sub;
-
-			&:nth-child(1) { background: $c-font-l; }
-			&:nth-child(2) { background: $c-highlight-1; }
-			&:nth-child(3) { background: $c-highlight-2; }
-			&:nth-child(4) { background: $c-highlight-3; }
-		}
-		
-		span {
-			font-size: 0.8em;
-			padding: 0 4px;
-			user-select: none;
-			cursor: pointer;
-			
-			&.active {
-				color: $c-prim;
-				font-weight: bold;
-			}
-		}
-	}
-</style>
-
 <script>
+	import animations from '@/data/animations';
+
 	export default {
 		name: 'solution-ani',
 		props: {
-			step: Number,
-			animation: String,
-			hideedit: Boolean
+			questionref: String,
+			currentStep: Number,
+			showedit: Boolean,
+			demo: Boolean
 		},
 		data: function() {
 			return {
 				aniObject: [[[]]],
+				step: 0,
 				frame: 0,
+				frameSlow: false,
 				frameInterval: 0,
 				selected: null,
 				multiSelect: [],
 				editing: false,
 				shiftDown: false,
 				animationOff: true,
-				fontSize: 24,
+				fontSize: 20,
 				height: 100
 			}
 		},
@@ -356,29 +185,73 @@
 			// Consts
 			this.TYPES = ['char', 'bar', 'sqrt'];
 			this.CLASSES = ['', 'sup', 'sup-r', 'sub-r', 'sub'];
-			this.FRAMELENGTH = 1000;
-			this.COLORS = 4;
-			
-			if (this.animation) {
-				this.aniObject = this.decodeAnimation();
-			}
+			this.FRAMELENGTHFAST = 800;
+			this.FRAMELENGTHSLOW = 1600;
+			this.COLORS = 5;
+			this.MAXFONT = 20;
+			this.NOSCROLL = e => [32, 38, 40].includes(e.keyCode) && e.preventDefault();
 		},
 		mounted: function() {
-			this.setScale();
-			this.initStep();
-			setTimeout(() => this.animationOff = false);
+			this.renderQuestion();
 		},
 		watch: {
+			questionref: function() {
+				this.renderQuestion();
+			},
+
 			editing: function(newVal) {
 				clearInterval(this.frameInterval);
-				this.step = 0;
+				this.step = this.currentStep;
 				this.frame = 0;
+				if (newVal) {
+					window.addEventListener('keydown', this.NOSCROLL);
+				} else {
+					window.removeEventListener('keydown', this.NOSCROLL);
+				}
 			},
-			step: function(newVal, oldVal) {
-				this.initStep(oldVal > newVal);
+
+			currentStep: function(newVal, oldVal) {
+				if (this.editing) {
+					return;
+				}
+				if (newVal > this.aniObject.length - 1) {
+					this.step = this.aniObject.length - 1;
+					this.frame = this.aniObject[this.step].length - 1;
+				} else {
+					let firstFrameDelay = 0;
+					if (newVal > oldVal) {
+						firstFrameDelay = this.FRAMELENGTHFAST;
+					}
+					let scaleChanged = this.setScale(newVal);
+					if (scaleChanged) {
+						firstFrameDelay += this.FRAMELENGTHFAST / 2;
+					}
+					setTimeout(() => {
+						this.step = newVal;
+						this.initStep(oldVal > newVal);
+					}, firstFrameDelay);
+				}
 			}
 		},
 		methods : {
+			renderQuestion: function() {
+				let animationCode = animations[this.questionref];
+				if (animationCode) {
+					this.aniObject = this.decodeAnimation(animationCode);
+				} else {
+					this.aniObject = [[[]]];
+					console.error('animation for question "' + this.questionRef + '" not found');
+				}
+
+				this.step = this.currentStep;
+
+				this.animationOff = true;
+				this.setScale(this.step);
+				this.setHeight();
+				this.initStep();
+				setTimeout(() => this.animationOff = false);
+			},
+
 			keyListener: function(event) {
 				if (this.editing && this.selected) {
 					if (this.shiftDown) {
@@ -388,8 +261,26 @@
 							// Arrow keys
 							case 37: this.editTerm('color', this.selected.color === 0 ? this.COLORS : '--'); return;
 							case 39: this.editTerm('color', this.selected.color === this.COLORS ? 0 : '++'); return;
-							case 38: this.editTerm('class', this.selected.class === this.CLASSES.length - 1 ? 0 : '++'); return;
-							case 40: this.editTerm('class', this.selected.class === 0 ? this.CLASSES.length - 1 : '--'); return;
+							case 38: {
+								if (this.selected.type === 0) {
+									this.editTerm('class', this.selected.class === this.CLASSES.length - 1 ? 0 : '++');
+								} else {
+									this.editTerm('show', 2);
+									this.editTerm('length', '++');
+								}
+								return;
+							}
+							case 40: {
+								if (this.selected.type === 0) {
+									this.editTerm('class', this.selected.class === 0 ? this.CLASSES.length - 1 : '--');
+								} else if (this.selected.length <= 1) {
+									this.editTerm('length', 0);
+									this.editTerm('show', 1);
+								} else {
+									this.editTerm('length', '--');
+								}
+								return;
+							}
 							// Ctrl
 							case 16: this.shiftDown = false; return;
 						}
@@ -400,14 +291,6 @@
 					) {
 						if (this.selected.type === 0) {
 							this.editTerm('value', event.key);
-						} else {
-							let length = parseInt(event.key);
-							if (length) {
-								this.editTerm('length', length);
-							} else if (length === 0) {
-								this.editTerm('length', 0);
-								this.editTerm('show', 1);
-							}
 						}
 					} else {
 						switch(event.keyCode) {
@@ -434,44 +317,30 @@
 				}
 			},
 
-			setScale: function() {
-				let maxX = 0,
-						maxY = 0;
-				this.aniObject.forEach((step, si) => {
-					step.forEach(frame => {
-						frame.forEach(term => {
-							maxX = term.show === 2 ? Math.max(maxX, term.x) : maxX;
-							maxY = term.show === 2 ? Math.max(maxY, term.y) : maxY;
-						});
+			setScale: function(step) {
+				let maxX = 0;
+				this.aniObject[step].forEach(frame => {
+					frame.forEach(term => {
+						maxX = term.show === 2 ? Math.max(maxX, term.x) : maxX;
 					});
 				});
-				this.fontSize = Math.floor(this.$el.clientWidth / (maxX + 2));
-				this.height = this.fontSize * (maxY + 1);
+				let newSize = Math.min(Math.floor(this.$el.clientWidth / (maxX + 2)), this.MAXFONT);
+				if (newSize - this.fontSize < 0 || newSize - this.fontSize > 5) {
+					this.fontSize = newSize;
+					return true;
+				}
 			},
 
-			// getScaledFont: function(step = this.step) {
-			// 	let max = 0;
-			// 	this.aniObject[step].forEach(frame => {
-			// 		frame.forEach(term => {
-			// 			max = term.show === 2 ? Math.max(max, term.x) : max;
-			// 		});
-			// 	});
-			// 	return Math.floor(this.$el.clientWidth / (max + 2));
-			// },
-
-			// getMaxHeight: function() {
-			// 	let max = 0;
-			// 	this.aniObject.forEach((step, si) => {
-			// 		let scale = this.getScaledFont(si);
-			// 		step.forEach(frame => {
-			// 			frame.forEach(term => {
-			// 				max = Math.max(max, ((term.y + 1) * scale));
-			// 			});
-			// 		});
-			// 	});
-
-			// 	return max;
-			// },
+			setHeight: function() {
+				let maxY = 0;
+				this.aniObject
+					.forEach(step => step
+						.forEach(frame => frame
+							.forEach(term => maxY = term.show === 2 ? Math.max(maxY, term.y) : maxY)
+						)
+					);
+				this.height = this.MAXFONT * (maxY + 1);
+			},
 
 
 			//
@@ -516,7 +385,6 @@
 						this.aniObject[si][fi].splice(termIndex, 1);
 					});
 				});
-				Vue.set(this.aniObject);
 			},
 
 			selectTerm: function(termIndex) {
@@ -608,20 +476,6 @@
 							});
 						});
 					}
-				}
-			},
-			
-			moveTerm: function(event) {
-				if (this.editing && event.pageX !== 0 && event.pageY !== 0) {
-					let gridSize = event.target.clientWidth;
-					this.editTerm(
-						'x',
-						Math.floor((event.clientX - event.target.offsetParent.offsetLeft) / gridSize)
-					);
-					this.editTerm(
-						'y',
-						Math.floor((event.clientY - event.target.offsetParent.offsetTop) / gridSize)
-					);
 				}
 			},
 			
@@ -718,11 +572,11 @@
 					this.frameInterval = setInterval(() => {
 						if (this.frame === this.aniObject[this.step].length - 1) {
 							clearInterval(this.frameInterval);
-							this.$emit('stepEnd', this.step);
+							this.$emit('stepend', this.step);
 						} else {
-							this.frame++
+							this.frame++;
 						}
-					}, this.FRAMELENGTH);
+					}, this.frameSlow ? this.FRAMELENGTHSLOW : this.FRAMELENGTHFAST);
 				}
 			},
 			
@@ -734,12 +588,23 @@
 				this.frame = 0;
 			},
 
+			replayStep: function() {
+				if (this.step > 0) {
+					this.step--;
+					this.frame = this.aniObject[this.step].length - 1;
+					setTimeout(() => {
+						this.step++;
+						this.initStep();
+					}, (this.frameSlow ? this.FRAMELENGTHSLOW : this.FRAMELENGTHFAST) * 1.5);
+				}
+			},
+
 
 			//
 			// Encoding
 			//
 			
-			decodeAnimation(animation = this.animation) {
+			decodeAnimation(animation) {
 				return animation
 					.split('||')
 					.map(s => s
@@ -747,20 +612,35 @@
 						.map(f => {
 							let frame = [];
 							for (let i = 0; i < f.length; i += 8) {
-								let term = {
-									type:   f[i],
-									x:      f[i + 2],
-									y:      f[i + 3],
-									color:  f[i + 4],
-									strike: f[i + 5],
-									class:  f[i + 6],
-									show:   f[i + 7]
-								}
-								term[f[i] === '0' ? 'value' : 'length'] = f[i + 1];
-								for (let key in term) {
-									if (key !== 'value') {
-										let code = term[key].charCodeAt();
-										term[key] = code - (code > 96 ? 87 : (code > 64 ? 55 : 48));
+								let term;
+								if (f[i] === '_') {
+									term = {
+										type:   f[i + 1],
+										x:      0,
+										y:      0,
+										color:  0,
+										strike: 0,
+										class:  0,
+										show:   0
+									}
+									term[f[i + 1] === '0' ? 'value' : 'length'] = 0;
+									i -= 6;
+								} else {
+									term = {
+										type:   f[i],
+										x:      f[i + 2],
+										y:      f[i + 3],
+										color:  f[i + 4],
+										strike: f[i + 5],
+										class:  f[i + 6],
+										show:   f[i + 7]
+									}
+									term[f[i] === '0' ? 'value' : 'length'] = f[i + 1];
+									for (let key in term) {
+										if (key !== 'value') {
+											let code = term[key].charCodeAt();
+											term[key] = code - (code > 96 ? 87 : (code > 64 ? 29 : 48));
+										}
 									}
 								}
 								frame.push(term);
@@ -770,30 +650,256 @@
 					);
 			},
 			
-			encodeAnimation: function(aniObject = this.aniObject) {
-				return aniObject
+			encodeAnimation: function(aniObject, log) {
+				let animation = aniObject
 					.map(step =>
 						step.map(frame =>
-							frame.map(term =>
-								[
-									term.type,
-									(term.type === 0 ? term.value : term.length),
-									term.x,
-									term.y,
-									term.color,
-									term.strike,
-									term.class,
-									term.show
-								].map(v => {
-									if (typeof v === 'string' || v < 10) {
-										return v;
-									}
-									return String.fromCharCode(v + (v > 35 ? 55 : 87));
-								}).join('')
-							).join('')
+							frame.map(term => {
+								if (term.show) {
+									return [
+										term.type,
+										(term.type === 0 ? term.value : term.length),
+										term.x,
+										term.y,
+										term.color,
+										term.strike,
+										term.class,
+										term.show
+									].map(v => {
+										if (typeof v === 'string' || v < 10) {
+											return v;
+										}
+										return String.fromCharCode(v + (v > 35 ? 29 : 87));
+									}).join('');
+								}
+								return '_' + term.type;
+							}).join('')
 						).join('|')
-					).join('||')
+					).join('||');
+				if (log) {
+					console.log(animation);
+				} else {
+					return animation;
+				}
 			}
 		}
 	};
 </script>
+
+<style scoped lang="scss">
+	$c-strike: $c-error;
+
+	.comp-solution-ani:focus {
+		outline: none;
+	}
+
+	.equation-bg {
+		position: relative;
+		padding: 1em;
+		border: 1px solid $c-border;
+		font-family: $f-math;
+		color: $c-font;
+		background:
+			linear-gradient($c-border, transparent 1px),
+			linear-gradient(90deg, $c-border, transparent 1px);
+		background-size: 1em 1em;
+		transition:
+			background-size $l-ani,
+			font-size $l-ani,
+			padding $l-ani;
+
+		&.animation-off,
+		&.animation-off .term {
+			transition: none;
+		}
+
+		.buttons {
+			position: absolute;
+			bottom: $w-pad;
+			right: $w-pad;
+
+			button {
+				margin-left: $w-pad;
+			}
+		}
+	}
+
+	.equation-contain {
+		position: relative;
+		white-space: nowrap;
+		width: 100%;
+	}
+
+	.term {
+		position: absolute;
+		z-index: 1;
+		display: inline-block;
+		height: 1em;
+		color: $c-font;
+		line-height: 0.95;
+		text-align: center;
+		opacity: 1;
+		transition: 
+			top $l-ani,
+			left $l-ani,
+			color $l-ani,
+			width $l-ani,
+			opacity $l-ani,
+			font-size $l-ani;
+
+		.equation-bg.frame-slow & {
+			transition: 
+				top $l-ani-slow,
+				left $l-ani-slow,
+				color $l-ani-slow,
+				width $l-ani-slow,
+				opacity $l-ani-slow,
+				font-size $l-ani;
+		}
+
+		&.color-1 { color: $c-highlight-1; }
+		&.color-2 { color: $c-highlight-2; }
+		&.color-3 { color: $c-highlight-3; } 
+		&.color-4 { color: $c-highlight-4; }
+		$strike-fade: 20%;
+		&.strike         { color: lighten($c-font, $strike-fade); }
+		&.color-1.strike { color: lighten($c-highlight-1, $strike-fade); }
+		&.color-2.strike { color: lighten($c-highlight-2, $strike-fade); }
+		&.color-3.strike { color: lighten($c-highlight-3, $strike-fade); } 
+		&.color-4.strike { color: lighten($c-highlight-4, $strike-fade); }
+		
+		&.bar:after {
+			content: '';
+			position: absolute;
+			top: calc(50% - 1px);
+			right: -1px;
+			left: -1px;
+			height: 2px;
+			border-radius: 2px;
+			background: $c-font;
+		}
+		
+		&.char:after {
+			content: '';
+			position: absolute;
+			top: calc(50% - 1px);
+			left: -1px;
+			right: -1px;
+			z-index: 1;
+			height: 2px;
+			border-radius: 2px;
+			background: $c-strike;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity $l-ani;
+		}
+
+		&.char.strike:after {
+			opacity: 1;
+		}
+
+		&.sub   { transform: scale(0.7) translate(-40%,  35%); }
+		&.sup   { transform: scale(0.7) translate(-40%, -35%); }
+		&.sub-r { transform: scale(0.7) translate( 40%,  35%); }
+		&.sup-r { transform: scale(0.7) translate( 40%, -35%); }
+		
+		&.hidden,
+		&.hidden.bar:after {
+			opacity: 0;
+			z-index: 0;
+			pointer-events: none;
+		}
+	}
+
+	.equation-contain.editing {
+		border-color: $c-prim;
+		
+		.term {
+			user-select: none;
+			transition-duration: 0.1s;
+			cursor: pointer;
+			
+			&:hover {
+				outline: 1px solid $c-prim;
+				outline-offset: -2px;
+			}
+			
+			&.selected {
+				background: transparentize($c-prim, 0.8);
+			}
+				
+			&.hidden.show-edit {
+				display: inline-block;
+				pointer-events: all;
+				opacity: 0.3;
+				
+				&.bar:after {
+					opacity: 0.3;
+				}
+			}
+		}
+	}
+
+	.controls {
+		font-size: $f-size-sm;
+
+		button {
+			padding: 5px 10px;
+			border-radius: 0;
+			border: 1px solid $c-border;
+			margin: 0 5px;
+			color: $c-font;
+			font-size: 1em;
+			background: $c-bg;
+		}
+
+		&>div {
+			margin-top: 5px;
+		}
+		
+		.edit-term {
+			margin-top: 10px;
+			
+			div {
+				margin-top: 10px;
+			}
+			
+			&>div:not(:first-child) {
+				padding-left: 10px;
+			}
+		}
+		
+		input[type=text],
+		input[type=number] {
+			width: 3em;
+			padding: 3px;
+			margin-left: 5px;
+		}
+		
+		.colour-select span {
+			display: inline-block;
+			padding: 10px;
+			border-radius: 100%;
+			margin: 2px;
+			vertical-align: sub;
+
+			&:nth-child(1) { background: $c-font; }
+			&:nth-child(2) { background: $c-highlight-1; }
+			&:nth-child(3) { background: $c-highlight-2; }
+			&:nth-child(4) { background: $c-highlight-3; }
+			&:nth-child(5) { background: $c-highlight-4; }
+		}
+		
+		span {
+			font-size: 0.8em;
+			padding: 0 4px;
+			user-select: none;
+			cursor: pointer;
+			
+			&.active {
+				color: $c-prim;
+				font-weight: bold;
+			}
+		}
+	}
+</style>

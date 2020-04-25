@@ -1,28 +1,44 @@
 {
-    "naturalnumber": {
-      "def": "The set of Natural numbers. <br> These are all positive whole numbers.<br/><br/><i>Ex.</i> 1, 2, 3, 4...",
-      "link": "/page",
-      "linkTitle": "Learn more about Number Sets"
+  "natural_number": {
+    "def": "The set of Natural numbers. <br> These are all positive whole numbers.",
+    "example": " 1, 2, 3, 4...",
+    "link": ["/topics/number-sets", "More on Number Sets"]
   },
-  "realnumber" : {
-      "def": "The set of Real numbers. <br/>These are all positive and negative numbers; including fractions, decimals and even numbers which cannot be expressed in these forms, such as Pi",
-      "link": "",
-      "linkTitle": ""
+  "real_number" : {
+    "def": "The set of Real numbers. <br/> These are all positive and negative numbers; including fractions, decimals, and even irrational numbers such as <i>pi</i> and <i>e</i>.",
+    "example": "5, <span v-symbol>-</span>15, 0.674, <span v-symbol>pi</span>...",
+    "link": ["/topics/number-sets", "More on Number Sets"]
   },
-  "integernumber" : {
-      "def": "This denotes the set of Integer numbers. These are all whole positive and negative numbers.<br/><br/><i>Ex.</i> - 2, -1, 0, 1, 2",
-      "link": "",
-      "linkTitle": ""
+  "integer_number" : {
+    "def": "The set of Integer numbers. <br/> These are all whole positive and negative numbers.",
+    "example": "<span v-symbol>-</span>2, <span v-symbol>-</span>1, 0, 1, 2",
+    "link": ["/topics/number-sets", "More on Number Sets"]
   },
-  "rationalnumber": {
-      "def": "This denotes the set of Rational numbers. These are all positive and negative numbers which can be expressed as a fraction.<br/><br/><i>Ex.</i> -1/2, 0, 1, 5/7",
-      "link": "",
-      "linkTitle": ""
+  "rational_number": {
+    "def": "The set of Rational numbers. These are all positive and negative numbers which can be expressed as a fraction.",
+    "example": "<span v-symbol>-</span>2, <span v-symbol>-</span><span v-frac>1/2</span>, 0, 0.97, <span v-frac>1/3</span>",
+    "link": ["/topics/number-sets", "More on Number Sets"]
+  },
+  "inequality": {
+    "def": "Whereas an equation shows two values which are equal to each other, an inequality show two values which not always equal.<br/><br/>The first value may be <br/>- <i class=\"sans\">greater than</i><br/>- <i class=\"sans\">less than</i><br/>- <i class=\"sans\">greater than or equal to</i><br/>&nbsp;&nbsp;or<br/>- <i class=\"sans\">less than or equal to</i><br/>the second value."
+  },
+  "less_than_or_equal_to": {
+    "def": "The value of to the left side of this symbol is <i class=\"sans\">less than or equal to</i> the value to the right side.",
+    "hideInDefPage": true
+  },
+  "greater_than_or_equal_to": {
+    "def": "The value to the left side of this symbol is <i class=\"sans\">greater than or equal to</i> the value to the right side.",
+    "hideInDefPage": true
   },
   "expand": {
-      "def": "Multiple out all terms"
+    "def": "To multiple out all terms in an equation. The opposite of factorisation."
+  },
+  "substitute": {
+    "def": "To replace an unknown term with a specific value.",
+    "example": "With the substitution of <span class=\"no-break\"><i>x</i> = 5,</span> the expression x<sup>2</sup> + 2 becomes 5<sup>2</sup> + 2."
   },
   "coefficient": {
-      "def": "The number which an unknown term is being mulipled by. <br/><br/> <i>Ex.</i> With 5x<sup>2</sup>, 5 is the coefficient of x<sup>2</sup>"
+    "def": "The number which an unknown term is being mulipled by.",
+    "example": "With 5x<sup>2</sup>, 5 is the coefficient of x<sup>2</sup>"
   }
 }

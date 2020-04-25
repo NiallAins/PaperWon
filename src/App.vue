@@ -1,16 +1,26 @@
 <template>
   <div
     id="app"
-    :class="{ 'keyboard-control': keyboardControl }"
+    :class="{
+      'keyboard-control': keyboardControl,
+      'font-lg': fontLarge
+    }"
     @keyup="$event.key === 'Tab' ? keyboardControl = true : ''"
     @mouseup="keyboardControl = false"
   >
     <header>
       <nav class="contain">
         <router-link :to="'/'" class="logo"> Paper<span>Won</span> </router-link>
-        <router-link :to="'papers'"> Papers </router-link>
-        <router-link :to="'topics'"> Topics </router-link>
-        <router-link :to="'about'" class="push-right"> About </router-link>
+        <router-link :to="'/papers'"> Papers </router-link>
+        <router-link :to="'/topics'"> Topics </router-link>
+        <router-link :to="'/definitions'"> Definitions </router-link>
+        <button
+          :class="['secondary', { 'active': fontLarge }]"
+          @click="fontLarge = !fontLarge"
+        >
+          <span>A</span><span>A</span><span>A</span>
+        </button>
+        <router-link :to="'/about'" class="push-right"> About </router-link>
       </nav>
     </header>
     <router-view></router-view>
@@ -22,7 +32,8 @@
     name: 'app',
     data: function() {
       return {
-        keyboardControl: false
+        keyboardControl: false,
+        fontLarge: false
       }
     }
   }
@@ -35,13 +46,13 @@
     left: 0;
     z-index: $z-header;
     width: 100%;
-    background: white;
+    background: $c-bg;
     @include shadow;
   }
 
   .logo {
     color: $c-prim;
-    font-size: 20px;
+    font-size: $f-size-lg;
     font-weight: bold;
     padding: 22px 10px;
     margin-right: 15px;
@@ -49,13 +60,31 @@
     span {
       color: $c-logo-gray;
       font-weight: normal;
-      font-size: 15px;
+      font-size: $f-size-md;
       padding-left: 2px;
       text-transform: uppercase;
     }
   }
 
   nav {
+    max-width: $break-max;
+
+    button.secondary {
+      padding: 2px 5px;
+      float: right;
+      margin: 20px 0 0 20px;
+
+      span:nth-child(1) {
+        font-size: 17px;
+      }
+      span:nth-child(2) {
+        font-size: 13px;
+      }
+      span:nth-child(3) {
+        font-size: 10px;
+      }
+    }
+    
     a {
       font-family: $f-sec;
       border-bottom: none;
@@ -66,7 +95,7 @@
       display: inline-block;
       color: $c-font;
       padding: 0 20px;
-      font-size: 16px;
+      font-size: $f-size-md;
       line-height: 70px;
       
       &:after {
@@ -77,7 +106,7 @@
         height: 3px;
         background-color: $c-prim;
         width: 0;
-        transition: all 0.2s $e-bounce;
+        transition: all $l-trans $e-bounce;
       }
 
       &:hover:after {

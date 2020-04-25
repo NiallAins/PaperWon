@@ -1,104 +1,154 @@
 <template>
 	<div class="view-exam-question">
-		<h3>
-			{{ $route.params.year }}
-			{{ $route.params.paper[0] === 'h' ? 'Higher' : 'Ordinary' }} Level Mathematics -
-			 Paper {{ $route.params.paper[1] === '1' ? 'One' : 'Two' }}
-		</h3>
-		<h4>
-			Question {{ $route.params.question }} <b>{{ question.label }})</b>
-		</h4>
-		<render-html>{{ question.text }}</render-html>
-		<step-list
-			v-model="solutionStep"
-			:text="[
-				'State the expression',
-				'Expand the expression by multipling out the brackets',
-				'Group the coefficients of x and x<sup>2</sup>',
-				'Set the coefficient of x to 2 times the coefficient of x<sup>2</sup>, as stated in the question',
-				'Multiple out the bracket',
-				'Rearrange the equation; moving unknowns to the left, constants to the right',
-				'Add like terms',
-				'Divide both sides by the co-efficient p'
-			]"
-		></step-list>
-		<solution-ani
-				:step="solutionStep"
-				equation="(2x + 1)(x^2 + px + 4)"
-				:keyframes="[
-					[
-						'a,(x^2+px+4),6',
-						'w,100',
-						'm,3:2,12',
-						'm,6:9,11',
-						'r,0',
-						'r,5',
-						'm,0:,-1',
-						'm,5:,-3',
-						'w',
-						'r,2',
-						'm,3:2,-2',
-						'r,2',
-						'r,10',
-						'r,12:2',
-						'r,21',
-						'm,14:,-2',
-						'm,5,-2',
-						'm,6:2,-1',
-						'a,^3,2',
-						'a,2,4',
-						'a,^2,7',
-						'r,9',
-						'a,8x,9'
-					],
-					[
-						'c,4:4,1',
-						'c,12:2,1',
-						'c,9:2,2',
-						'c,15:2,2'
-					]
-				]"
-		></solution-ani>
+		<div class="row nav-bar">
+			<div class="col-6">
+				<router-link
+					class="link-small"
+					:to="'/papers/' + year + '/' + paper"
+				><i class="icon-prev"></i>Back to Paper</router-link>
+			</div>
+			<div class="col-6 content-right">
+				<router-link
+					v-if="questionData.prev"
+					class="link-small"
+					:to="'/papers/' + questionData.prev"
+				><i class="icon-prev"></i>Previous Question</router-link>
+				<router-link
+					v-if="questionData.next"
+					class="link-small"
+					:to="'/papers/' + questionData.next"
+				>Next Question<i class="icon-next"></i></router-link>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<h4> {{ title }} </h4>
+				<h2>
+					Section {{ sectionNum }},
+					Question {{ questionNum }} <b>{{ questionData.label.replace('>', '') }}</b>
+				</h2>
+			</div>
+		</div>
 
-		<!--
-		2x^3+2px^2+8x+x^2+px+4
-		2x^3 + x^2(2p + 1) + x(8 + p) + 4
-		2(2p + 1) = 8 + p
-		4p + 2 = 8 + p
-		4p - p = 8 - 2
-		3p = 6
-		p = 2 -->
+		<div class="row">
+			<div class="col-12">
+				<h2> Problem </h2>
+				<div v-if="questionParentText">
+					<render-html>{{ questionParentText }}</render-html>
+					<br/>
+				</div>
+				<render-html>{{ questionData.text }}</render-html>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				<h2> Solution </h2>
+			</div>
+			<div class="col-5">
+				<step-list
+					v-model="solutionStep"
+					:questionref="questionRef"
+				></step-list>
+			</div>
+			<div class="col-7">
+				<solution-ani
+					v-if="questionData.ani"
+					:currentStep="solutionStep"
+					:questionref="questionRef"
+					:showedit="false"
+				></solution-ani>
+				<br/>
+				<grapher
+					v-if="questionData.graph"
+					:currentStep="solutionStep"
+					:questionref="typeof questionData.graph === 'string' ? questionData.graph : questionRef"
+				></grapher>
+			</div>
+		</div>
 	</div>
 </template>
-
-<style scoped lang="scss">
-	.view-exam-question {
-		padding-bottom: 200px;
-	}
-</style>
 
 <script>
 	import paperData from '@/data/paperData';
 	import renderHtml from '@/components/render-html';
 	import stepList from '@/components/step-list';
 	import solutionAni from '@/components/solution-ani';
+	import grapher from '@/components/grapher';
 
 	export default {
 		name: 'ExamQuestion',
 		components: {
 			'render-html': renderHtml,
 			'step-list': stepList,
-			'solution-ani': solutionAni
+			'solution-ani': solutionAni,
+			'grapher': grapher
+		},
+		props: {
+			year: String,
+			paper: String,
+			question: String
 		},
 		data: function() {
 			return {
-				question: {},
+				questionData: {},
+				questionRef: '',
+				questionParentText: '',
+				title: '',
+				sectionNum: '',
+				questionNum: '',
 				solutionStep: 0
 			}
 		},
+		watch: {
+			question: function() {
+				this.renderQuestion();
+			}
+		},
 		created: function() {
-			this.question = paperData[this.$route.params.year][this.$route.params.paper][this.$route.params.question - 1][this.$route.params.part - 1];
+			this.renderQuestion();
+		},
+		methods: {
+			renderQuestion: function() {
+				this.title =
+					this.year +
+					(this.paper[0] === 'h' ? ' Higher' : ' Ordinary') +
+					' Level Paper' +
+					(this.paper[1] === '1' ? ' One' : ' Two');
+				this.questionRef = [this.year, this.paper, this.question].join('-');
+
+				let questionParts = this.question.split('-');
+				this.sectionNum = questionParts[0];
+				this.questionNum = questionParts[1];
+
+				let questionParentObj = paperData[this.year][this.paper][this.sectionNum - 1].questions[this.questionNum - 1];
+				this.questionParentText = questionParentObj.text;
+				this.questionData = questionParentObj.parts[ questionParts[2] - 1];
+			}
+		}
+	}
+</script>
+
+<style scoped lang="scss">
+	.nav-bar {
+		border-bottom: 1px solid $c-border;
+		padding-bottom: #{1 * $w-pad};
+		margin-bottom: #{2 * $w-pad};
+
+		.content-right a:last-child {
+			padding-left: #{2 * $w-pad};
 		}
 	}
 
-</script>
+	h4 {
+		margin-bottom: 5px;
+	}
+
+	.row:last-child {
+		margin-top: 20px;
+	}
+
+	.link-back {
+		line-height: 20px;
+	}
+</style>

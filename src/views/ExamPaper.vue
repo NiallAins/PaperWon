@@ -1,9 +1,9 @@
 <template>
 		<div class="view-exam-paper">
-			<section>
-				<p>
-					Select a question from the paper below to work through its solution.
-				</p>
+			<section class="row">
+				<div class="col-12 no-pad-b">
+					<p> Select a question from the paper below to work through its solution.</p>
+				</div>
 			</section>
 
 			<section :class="['page', { 'nav-open': navOpen }]">
@@ -18,7 +18,7 @@
 								<td colspan="3">
 									Section {{ String.fromCharCode(sIndex + 65) }}
 									<br>
-									<i> {{ section.title }}</i>
+									<i class="sans"> {{ section.title }}</i>
 								</td>
 							</tr>
 							<tr>
@@ -33,7 +33,8 @@
 								<td> {{ qIndex + 1 }} </td>
 								<td>
 									<span v-for="(topic, tIndex) in question.topics">
-										<span v-if="tIndex > 0">,</span><router-link
+										<span v-if="tIndex > 0">, </span>
+										<router-link
 											class="link-small"
 											:to="'/topics/' + topic"
 										>{{ topic }}</router-link>
@@ -55,11 +56,11 @@
 					</button>
 
 					<div class="paper-title">
-							<h2> Leaving Certificate Examination {{ $route.params.year }} </h2>
-							<br>
-							<h1> Mathematics </h1>
-							<h2> Paper {{ $route.params.paper[1] }}</h2>
-							<h2> {{ $route.params.paper[0] === 'h' ? 'Higher' : 'Ordinary' }} Level </h2>
+						<h2> Leaving Certificate Examination {{ this.year }} </h2>
+						<br>
+						<h1> Mathematics </h1>
+						<h2> Paper {{ this.paper[1] }}</h2>
+						<h2> {{ this.paper[0] === 'h' ? 'Higher' : 'Ordinary' }} Level </h2>
 					</div>
 
 					<div class="contain" v-for="(section, sIndex) in paperData">
@@ -74,11 +75,27 @@
 							v-for="(question, qIndex) in section.questions"
 							:id="'s' + sIndex + '-q' + qIndex"
 						>
-								<em>Question {{ qIndex + 1 }} </em>
+								<em> Question {{ qIndex + 1 }} </em>
+								<span class="push-right"> ({{ question.marks }} marks) </span>
+
+								<p>
+									<render-html class="hide-def">{{ question.text }}</render-html>
+								</p>
+
+								<div v-if="question.graph" class="row">
+									<div class="col-8 col-off-2 no-pad-t">
+										<grapher
+											v-if="question.graph"
+											:onpaper="true"
+											:questionref="question.graph"
+										></grapher>
+									</div>
+								</div>
+
 								<router-link
 									class="question-part"
 									v-for="(part, pIndex) in question.parts"
-									:to="$route.path + '/' + (qIndex + 1) + '/' + (pIndex + 1)"
+									:to="$route.path + '/' + [sIndex + 1, qIndex + 1, pIndex + 1].join('-')"
 								>
 										<div class="part-num">
 											{{ part.label.replace('>', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') }}
@@ -91,6 +108,33 @@
 			</section>
 		</div>
 </template>
+
+<script>
+	import allPaperData from '@/data/paperData';
+	import renderHtml from '@/components/render-html';
+	import grapher from '@/components/grapher';
+
+	export default {
+		name: 'about',
+		components: {
+			'render-html': renderHtml,
+			'grapher': grapher
+		},
+		props: {
+			year: String,
+			paper: String
+		},
+		data: function() {
+			return {
+				paperData: [],
+				navOpen: false
+			}
+		},
+		created: function() {
+			this.paperData = allPaperData[this.year][this.paper];
+		}
+	}
+</script>
 
 <style scoped lang="scss">
 	$w-page: 880px;
@@ -112,7 +156,7 @@
 
 		aside {
 			position: fixed;
-			left: calc(50% - #{$w-page / 2});
+			left: calc(50vw - #{$w-page / 2});
 			z-index: 0;
 			width: $w-aside;
 			border: 1px solid $c-border;
@@ -134,6 +178,7 @@
 			z-index: 1;
 			padding: 70px 60px;
 			border: 1px solid $c-border;
+			color: $c-font-exam;
 			background: $c-bg;
 			transition: left $l-trans;
 			@include shadow();
@@ -142,20 +187,23 @@
 				position: sticky;
 				top: #{$h-header + (2 * $w-pad)};
 				z-index: $z-sticker;
+				border: 1px solid $c-border;
 				border-top-left-radius: 0;
 				margin: -5px 0 -5px -72px;
+				background: $c-bg-d;
+				color: $c-font;
 				opacity: 1;
 				transition: opacity $l-trans;
 
 				&:before {
 					content: '';
 					position: absolute;
-					left: 0;
+					left: -1px;
 					top: -5px;
 					height: 5px;
-					width: 11px;
+					width: 12px;
 					border-top-left-radius: 100%;
-					background: $c-prim-dd;
+					background: $c-bg-dd;
 				}
 
 				&.aside-open {
@@ -167,7 +215,7 @@
 
 		&.nav-open {
 			aside {
-				left: calc(50% - #{($w-aside / 2) + ($w-page / 2) + $w-pad});
+				left: calc(50vw - #{($w-aside / 2) + ($w-page / 2) + (2 * $w-pad)});
 			}
 
 			main {
@@ -221,17 +269,15 @@
 		text-align: center;
 
 		h1, h2 {
-			font-family: $f-sec;
 			font-weight: 500;
-			color: black;
 		}
 
 		h1 {
-			font-size: 36px;
+			font-size: $f-size-title-exam;
 		}
 
 		h2 {
-			font-size: 24px;
+			font-size: $f-size-title;
 		}
 	}
 
@@ -252,11 +298,6 @@
 	.question {
 		margin-top: 60px;
 
-		em {
-			font-weight: bold;
-			font-style: normal;
-		}
-
 		.question-part {
 			position: relative;
 			display: block;
@@ -264,6 +305,7 @@
 			padding-left: 4em;
 			border: 1px solid $c-border;
 			margin: 1em 0;
+			line-height: 1.35;
 			
 			&:hover,
 			&:focus {
@@ -281,24 +323,3 @@
 		}
 	}
 </style>
-
-<script>
-	import renderHtml from '@/components/render-html';
-	import allPaperData from '@/data/paperData';
-
-	export default {
-		name: 'about',
-		components: {
-			'render-html': renderHtml
-		},
-		data: function() {
-			return {
-				paperData: [],
-				navOpen: false
-			}
-		},
-		created: function() {
-			this.paperData = allPaperData[this.$route.params.year][this.$route.params.paper];
-		}
-	}
-</script>
