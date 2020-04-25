@@ -8,6 +8,7 @@
   },
   "vue": {
     "runtimeCompiler": true,
+    "publicPath": "/PaperWon/dist/",
     "css": {
       "loaderOptions": {
         "sass": {
