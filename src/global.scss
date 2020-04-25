@@ -264,7 +264,7 @@ $gutter: $w-pad;
 $colCount: 12;
 
 .contain {
-	width: calc(100% - ($gutter * 2));
+	width: calc(100% - #{$gutter * 2});
 	margin: 0 auto;
 
 	&, [class^="view-"] {
