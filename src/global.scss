@@ -41,6 +41,7 @@ body {
 }
 
 [class^="view-"] {
+	position: relative;
 	overflow: hidden;
 	max-width: $break-max;
 	min-width: $break-min;
@@ -80,6 +81,19 @@ a {
 	text-decoration: none;
 	color: $c-font;
 
+	&.link {
+		color: $c-prim;
+
+		&:hover {
+			color: $c-prim-d;
+			text-decoration: underline;
+		
+			i:after {
+				border-color: $c-prim-d;
+			}
+		}
+	}
+
 	&.link-small {
 		color: $c-prim;
 		font-size: $f-size-sm;
@@ -116,6 +130,13 @@ sup {
 	i:not(.sans) {
 		font-size: 1.4em;
 	}
+}
+
+.font-symbol {
+	padding: 0 1px;
+	font-size: 1.3em;
+	font-weight: bold;
+	vertical-align: -6%;
 }
 
 button, a.button {
@@ -180,7 +201,7 @@ button, a.button {
 	}
 }
 
-span.no-break {
+span.no-wrap {
 	white-space: nowrap;
 }
 
@@ -236,18 +257,6 @@ table.frac {
 
 	tr:first-child td {
 		border-bottom: 1px solid $c-font;
-	}
-}
-
-[class^="symbol-"] {
-	padding: 0 1px;
-
-	&.symbol-real,
-	&.symbol-natural,
-	&.symbol-integer {
-		font-size: 1.3em;
-		font-weight: bold;
-		vertical-align: -6%;
 	}
 }
 

@@ -1,5 +1,5 @@
 <template>
-	<span class="comp-def">
+	<span class="comp-def no-wrap">
 		<span>
 			<slot></slot>
 		</span>
@@ -12,7 +12,7 @@
 			<render-html>
 				{{ termObj.def }}
 				<span v-if="termObj.example" class="example">
-					<i class="sans">Ex.</i> {{ term.example }}
+					<i class="sans">Ex.</i> {{ termObj.example }}
 				</span>
 			</render-html>
 		  <router-link
@@ -69,7 +69,7 @@
 			position: absolute;
 			left: -3px; 
 			top: -5px;
-			bottom: -4px;
+			bottom: -3px;
 			z-index: $z-dropdown - 1;
 			width: calc(100% + 6px);
 			border-bottom: 3px solid $c-prim;
@@ -113,7 +113,7 @@
 		.def-box {
 			position: absolute;
 			left: 0px;
-			top: calc(1em + 10px);
+			top: calc(1em + 9px);
 			z-index: $z-dropdown;
 			visibility: hidden;
 			opacity: 0;
@@ -121,6 +121,7 @@
 			padding: 20px 15px;
 			border: 1px solid $c-border;
 			font-size: 0.9em;
+			white-space: normal;
 			background: white;
 			transition:
 				box-shadow $l-trans ease $l-ani,
@@ -138,7 +139,7 @@
 				bottom: 10px;
 			}
 
-			.exmaple {
+			.example {
 				padding-top: $w-pad;
 			}
 		}

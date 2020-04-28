@@ -37,6 +37,10 @@
 					<render-html>{{ questionParentText }}</render-html>
 					<br/>
 				</div>
+				<div v-if="questionData.addText">
+					<render-html>{{ questionData.addText }}</render-html>
+					<br/>
+				</div>
 				<render-html>{{ questionData.text }}</render-html>
 			</div>
 		</div>
@@ -56,7 +60,7 @@
 					v-if="questionData.ani"
 					:currentStep="solutionStep"
 					:questionref="questionRef"
-					:showedit="false"
+					:showedit="true"
 				></solution-ani>
 				<br/>
 				<grapher
@@ -135,8 +139,8 @@
 		padding-bottom: #{1 * $w-pad};
 		margin-bottom: #{2 * $w-pad};
 
-		.content-right a:last-child {
-			padding-left: #{2 * $w-pad};
+		.content-right a {
+			padding: 0 $w-pad;
 		}
 	}
 

@@ -3,7 +3,7 @@
 		<div class="row fill-height vert-center">
 			<div class="col-6">
 				<article>
-					<h1> Master your <br/> Leaving Certificate Maths <br/> course with our interactive exam paper breakdowns.</h1>
+					<h1> Master your <br/> Leaving Certificate Maths <br/> paper with our interactive exam breakdowns.</h1>
 					
 					<h3> Get started by working through questions by year or by topic:</h3>
 					<div class="row">
@@ -40,6 +40,7 @@
 <script>
 	import solutionAni from '@/components/solution-ani';
 	import grapher from '@/components/grapher';
+	import db from '@/database';
 
 	export default {
 		name: 'home',

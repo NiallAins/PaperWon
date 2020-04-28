@@ -10,6 +10,10 @@ Object.keys(directives).forEach(f => {
 });
 Vue.component('def', def);
 
+// Browser detection
+window.browser = 'hello';
+
+
 Vue.config.productionTip = false;
 
 new Vue({

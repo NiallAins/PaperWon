@@ -58,10 +58,11 @@
     margin-right: 15px;
 
     span {
+      padding-left: 2px;
+      vertical-align: -6%;
       color: $c-logo-gray;
       font-weight: normal;
       font-size: $f-size-md;
-      padding-left: 2px;
       text-transform: uppercase;
     }
   }

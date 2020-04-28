@@ -1,0 +1,33 @@
+{
+  "notequal": "&#8800;",
+  "times": "&#215;",
+  "divide": "&#247;",
+  "greater_than_or_equal_to": "&#8805;",
+  "less_than_or_equal_to": "&#8804;",
+  "plusminus": "&#177;",
+  "sum": "&#8721;",
+  "infinity": "&#8734;",
+  "follows": "&#8658;",
+  "-": "&#8722;",
+
+  "pi": "&#960;",
+  "i": "&#8305;",
+  "thetha": "&#952;",
+  
+  "integral": "&#8747;",
+  "differential": "&#8706;",
+  "function": "&#402;",
+  
+  "element": "&#8712;",
+  "notelement": "&#8713;",
+  "intersection": "&#8745;",
+  "union": "&#8746;",
+  "subset": "&#8834;",
+  "superset": "&#8835;",
+  "notsubset": "&#8836;",
+  "notsuperset": "&#8837;",
+  
+  "natural": "&#8469;",
+  "real": "&#8477;",
+  "integer": "&#8484;"
+}

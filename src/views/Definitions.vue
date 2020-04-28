@@ -11,7 +11,6 @@
 					<input
 						type="text"
 						v-model="searchterm"
-						@input="filterTerms()"
 						placeholder="Search for definition..."
 					/>
 				</p>
@@ -21,6 +20,10 @@
 		<div class="row results">
 			<div class="col-12 no-result" v-if="defs.length === 0">
 				<h3> No results found for "{{ searchterm }}"</h3>
+				<button @click="searchterm = ''" class="secondary">
+					<i class="icon-prev"></i>
+					Back to Full List
+				</button>
 			</div>
 			<div
 				v-for="d in defs"
@@ -78,6 +81,11 @@
 				this.defs = this.ALLDEFS;
 			}
 		},
+		watch: {
+			searchterm: function() {
+				this.filterTerms();
+			}
+		},
 		methods: {
 			filterTerms: function() {
 				this.defs = this.ALLDEFS.filter(t => t.name.indexOf(this.searchterm) !== -1);
@@ -102,9 +110,13 @@
 
 	.results {
 		.col-12 {
-			border-bottom: 1px solid $c-border;
+			//border-bottom: 1px solid $c-border;
 			margin-bottom: $w-pad / 2;
 			padding-left: $w-pad * 2;
+
+			p {
+				margin-top: $w-pad;
+			}
 		}
 
 		.no-result {
@@ -113,6 +125,15 @@
 			h3 {
 				font-style: italic;
 				text-transform: none;
+			}
+
+			button {
+				margin-top: 40px;
+
+				i:after {
+					margin-top: -1px;
+					border-color: $c-font;
+				}
 			}
 		}
 	}
@@ -130,6 +151,7 @@
 
 	a.link-small {
 		padding: $w-pad;
+		padding-top: $w-pad / 2;
 		display: block;
 	}
 </style>

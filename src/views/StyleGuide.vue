@@ -25,7 +25,7 @@
 
     <br/><br/>
 
-    Fraction: <span v-frac> 15<i>x</i> / 2 + 5</span>
+    Fraction: <table class=\"frac\"><tr><td>15<i>x</i></td></tr><tr><td>2 + 5</td></tr></table>
 
     <br/><br/> 
 
