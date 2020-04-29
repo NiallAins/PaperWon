@@ -45,7 +45,7 @@ body {
 	overflow: visible;
 	max-width: $break-max;
 	min-width: $break-min;
-	margin: #{$h-header + ($w-pad * 3)} auto 100px;
+	margin: #{$h-header + ($w-pad * 3)} auto 50px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -180,6 +180,25 @@ button, a.button {
 	}
 }
 
+ul {
+	margin: 0;
+	padding: 0;
+	padding-top: #{$w-pad / 2};
+	list-style: none;
+
+	li {
+		position: relative;
+		padding: #{$w-pad / 2} 0 0 $w-pad;
+		margin-left: $w-pad;
+
+		&:before {
+			content: '-';
+			position: absolute;
+			left: 0;
+			top: 0.3em;
+		}
+	}
+}
 
 //
 // Maths formatting

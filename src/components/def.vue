@@ -9,12 +9,11 @@
 				'has-link': termObj.link
 			}"
 		>
-			<render-html>
-				{{ termObj.def }}
-				<span v-if="termObj.example" class="example">
-					<i>Ex.</i> {{ termObj.example }}
-				</span>
-			</render-html>
+			<render-html>{{ termObj.def }}</render-html>
+			<div class="example" v-if="termObj.example">
+				<i> Ex. </i>
+				<render-html>{{ termObj.example }}</render-html>
+			</div>
 		  <router-link
 			  v-if="termObj.link"
 			  :to="termObj.link[0]"

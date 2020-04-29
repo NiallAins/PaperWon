@@ -20,10 +20,13 @@ $c-prim-l: lighten($c-prim, 10%);
 $c-prim-comp: complement($c-prim);
 
 $c-highlight-1: $c-prim;
-$c-highlight-2: adjust-hue($c-prim-d, 270deg);
+$c-highlight-2: darken(adjust-hue($c-prim-d, 270deg), 2%);
 $c-highlight-3: adjust-hue($c-prim, 90deg);
 $c-highlight-4: adjust-hue($c-prim, 180deg);
 $c-error: #e63d3d;
+
+$c-exam-hl: lighten($c-highlight-3, 35%);
+$c-exam-ol: lighten($c-prim, 35%);
 
 $c-logo-gray: #999;
 $c-bg: #fff;

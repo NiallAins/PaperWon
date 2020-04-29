@@ -98,9 +98,10 @@
 									v-for="(part, pIndex) in question.parts"
 									:to="$route.path + '/' + [sIndex + 1, qIndex + 1, pIndex + 1].join('-')"
 								>
-										<div class="part-num">
-											{{ part.label.replace('>', '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') }}
-										</div>
+										<span
+											class="part-num"
+											v-html="formatePartLabel(part.label)"
+										></span>
 										<render-html class="hide-def">{{ part.text }}</render-html>
 								</router-link>
 						</div>
@@ -135,6 +136,12 @@
 			this.paperData = allPaperData[this.year][this.paper];
 		},
 		methods: {
+			formatePartLabel: function(label) {
+				if (label.match(/[iv][iv]/)) {
+					return label.replace(/\([a-z]\)/, '&nbsp;&nbsp;&nbsp;&nbsp;');
+				}
+				return label;
+			},
 			scrollTo: function(questionRef) {
 				let top = this.$refs[questionRef][0].offsetTop + 100;
 				window.scrollTo({ top: top, behavior: 'smooth' });
@@ -322,12 +329,17 @@
 		.question-part {
 			position: relative;
 			display: block;
-			padding: 2em;
-			padding-left: 4em;
+			padding: 2em 2.5em 2em 5em;
+			padding-left: 5em;
+			text-indent: -5em;
 			border: 1px solid $c-border;
 			margin: 1em 0;
 			line-height: 1.35;
 			
+			&>* {
+				text-indent: 0;
+			}
+
 			&:hover,
 			&:focus {
 				outline: 2px solid $c-prim;
@@ -335,11 +347,11 @@
 			}
 
 			.part-num {
-				position: absolute;
-				transition: all 0.1s;
-				left: 0.8em;
-				top: 1.9em;
+				display: inline-block;
+				width: 4em;
+				padding-right: 1em;
 				font-weight: bold;
+				text-align: right;
 			}
 		}
 	}

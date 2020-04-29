@@ -49,6 +49,22 @@
 
 		<div class="row">
 			<div class="col-12">
+				<h2>Study</h2>
+				<p>
+					Learn more about the concepts covered in this question:
+					<ul>
+						<li v-for="t in questionTopics">
+							<router-link class="link" :to="'/topics/' + t">
+								{{ t }}
+							</router-link>
+						</li>
+					</ul>
+				</p>
+			</div>
+		</div>
+
+		<div class="row solution">
+			<div class="col-12">
 				<h2> Solution </h2>
 			</div>
 			<div class="col-5">
@@ -99,6 +115,7 @@
 				questionData: {},
 				questionRef: '',
 				questionParentText: '',
+				questionTopics: [],
 				title: '',
 				sectionNum: '',
 				questionNum: '',
@@ -116,7 +133,7 @@
 		methods: {
 			renderQuestion: function() {
 				this.currentStep = 0;
-				
+
 				this.title =
 					this.year +
 					(this.paper[0] === 'h' ? ' Higher' : ' Ordinary') +
@@ -128,9 +145,10 @@
 				this.sectionNum = questionParts[0];
 				this.questionNum = questionParts[1];
 
-				let questionParentObj = paperData[this.year][this.paper][this.sectionNum - 1].questions[this.questionNum - 1];
-				this.questionParentText = questionParentObj.text;
-				this.questionData = questionParentObj.parts[ questionParts[2] - 1];
+				let questionParentData = paperData[this.year][this.paper][this.sectionNum - 1].questions[this.questionNum - 1];
+				this.questionParentText = questionParentData.text;
+				this.questionTopics = questionParentData.topics;
+				this.questionData = questionParentData.parts[ questionParts[2] - 1];
 			}
 		}
 	}
@@ -147,16 +165,20 @@
 		}
 	}
 
+	li {
+		text-transform: capitalize;
+	}
+
 	.problem {
 		line-height: 1.5;
 	}
 
-	h4 {
-		margin-bottom: 5px;
+	.solution h2 {
+		margin-bottom: 0;
 	}
 
-	.row:last-child {
-		margin-top: 20px;
+	h4 {
+		margin-bottom: 5px;
 	}
 
 	.link-back {

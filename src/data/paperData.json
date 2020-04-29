@@ -7,7 +7,7 @@
         "questions": [
           {
             "marks": 25,
-            "topics": ["algebra", "fractions"],
+            "topics": ["fractions", "factorisation"],
             "parts": [
               {
                 "label": "(a)",
@@ -39,7 +39,7 @@
                 "next": "2019/h1/1-2-2"
               },
               {
-                "label": ">(ii)",
+                "label": "(a) (ii)",
                 "text": "Use <def term=\"substitute\">substitution</def> to verify that <i m>f</i>(<i m>x</i>) < <i m>g</i>(<i m>x</i>), for <i m>x</i> = 1.9.",
                 "addText": "The function <i m>g</i>(<i m>x</i>) = 4 <i m>x</i> + 1.",
                 "graph": true,

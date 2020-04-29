@@ -12,7 +12,7 @@
 				<div class="row no-pad-v papers">
 					<div class="col" v-for="part in paper.parts">
 						<router-link
-							class="paper-link"
+							:class="['paper-link', 'level-' + part[0]]"
 							:to="'/papers/' + paper.year + '/' + part"
 						>
 							{{ part[0] === 'h' ? 'Higher' : 'Ordinary' }} Level
@@ -67,6 +67,7 @@
 	}
 
 	.paper-link {
+		overflow: hidden;
 		position: relative;
 		top: 0;
 		display: table-cell;
@@ -89,5 +90,23 @@
 			top: -3px;
 			@include shadow_sm_raise();
 		}
+
+		&:before {
+			content: '';
+			position: absolute;
+    	top: 73px;
+    	right: -100px;
+    	bottom: -94px;
+    	left: 0;
+			border-style: solid;
+    	border-width: 0 100px 100px 0;
+    	border-bottom-right-radius: 400px;
+		}
+			&.level-h:before {
+				border-color: $c-exam-hl;
+			}
+			&.level-o:before {
+				border-color: $c-exam-ol;
+			}
 	}
 </style>

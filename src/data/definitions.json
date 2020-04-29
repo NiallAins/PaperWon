@@ -32,30 +32,30 @@
   },
   "expand": {
     "def": "To multiple out all terms in an equation. The opposite of <router-link class=\"link\" :to=\"'/definitions/factorise'\">factorisation</router-link>.",
-    "example": "The expansion of 3(<i>x</i> + 3) is 3<i>x</i> + 9",
+    "example": "The expansion of 3(<i m>x</i> + 3) is 3<i m>x</i> + 9",
     "link": ["/topics/factorisation", "More on factorisation"]
   },
   "factorise": {
     "def": "To write an expression as the multiplication of several factors, or smaller numbers. This is the opposite of <router-link class=\"link\" :to=\"'/definitions/expand'\">expanding</router-link>.",
-    "example": "The factorisation of 3<i>x</i> + 9 is 3(<i>x</i> + 3)",
+    "example": "The factorisation of 3<i m>x</i> + 9 is 3(<i m>x</i> + 3)",
     "link": ["/topics/factorisation", "More on factorisation"]
   },
   "substitute": {
     "def": "To replace an unknown term with a specific value.",
-    "example": "With the substitution of <span class=\"no-wrap\"><i>x</i> = 5,</span> the expression x<sup>2</sup> + 2 becomes 5<sup>2</sup> + 2."
+    "example": "With the substitution of <span class=\"no-wrap\"><i m>x</i> = 5,</span> the expression <span class=\"math\"><i>x</i><sup>2</sup> + 2</span> becomes <span class=\"math\">5<sup>2</sup> + 2</span>."
   },
   "coefficient": {
     "def": "The number which an unknown term is being mulipled by.",
-    "example": "With 5x<sup>2</sup>, 5 is the coefficient of x<sup>2</sup>"
+    "example": "With <span class=\"math\">5x<sup>2</sup></span>, 5 is the coefficient of <i m>x</i><sup>2</sup>"
   },
   "numerator": {
     "def": "The value above the line in a fraction.",
-    "example": "In the fraction <table class=\"frac\"><tr><td>5</td></tr><tr><td>3 + 2</td></tr></table>, 5 is the numerator and 3 + 2 is the denominator",
+    "example": "In the fraction <table class=\"frac\"><tr><td>5</td></tr><tr><td>3 + 2</td></tr></table>,<br/>5 is the numerator and 3 + 2 is the denominator",
     "link": ["/topics/fractions", "More on fractions"]
   },
   "denominator": {
     "def": "The value below the line in a fraction.",
-    "example": "In the fraction <table class=\"frac\"><tr><td>5</td></tr><tr><td>3 + 2</td></tr></table>, 5 is the numerator and 3 + 2 is the denominator",
+    "example": "In the fraction <table class=\"frac\"><tr><td>5</td></tr><tr><td>3 + 2</td></tr></table>,<br/>5 is the numerator and 3 + 2 is the denominator",
     "link": ["/topics/fractions", "More on fractions"]
 
   }

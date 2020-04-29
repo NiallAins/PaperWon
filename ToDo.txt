@@ -1,11 +1,6 @@
-StepAni
-  - Fix left border bug
-  - Fix variable total height bug
 ExamPaper
   - Small screen contents
 ExamQuestion
-  - Add topics / more study section
-  - Fix question part number bug
   - remove auto playing animation?
 SolutionAni
   - decide on starting step protocal

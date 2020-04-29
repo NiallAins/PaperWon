@@ -18,7 +18,7 @@
     ],
     ["Multiply out the brackets, and combine like terms"],
     ["Simplify the equation", "Notice that each term is a multiple of 3, so we can divide by 3 to simplify."],
-    ["Factorise and solve", "<router-link class=\"link-small\" to=\"/topics/factorisation\">Learn more about factorisation...</router-link>"]
+    ["Factorise and solve"]
   ],
   "2019-h1-1-2-1": [
     ["Use the function <span class=\"math\"><i>g</i>(<i>x</i>)</span> to calculate values for <i m>y</i>"],
