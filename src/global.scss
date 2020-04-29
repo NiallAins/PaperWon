@@ -42,7 +42,7 @@ body {
 
 [class^="view-"] {
 	position: relative;
-	overflow: hidden;
+	overflow: visible;
 	max-width: $break-max;
 	min-width: $break-min;
 	margin: #{$h-header + ($w-pad * 3)} auto 100px;
@@ -114,29 +114,8 @@ em {
 	font-style: normal;
 }
 
-i:not(.sans) {
-	font-family: $f-italic;
-	font-size: 1.1em;
-	letter-spacing: 2px;
-
-	sup {
-		font-size: 0.85em;
-	}
-}
-
-sup {
-	font-size: 0.7em;
-
-	i:not(.sans) {
-		font-size: 1.4em;
-	}
-}
-
-.font-symbol {
-	padding: 0 1px;
-	font-size: 1.3em;
-	font-weight: bold;
-	vertical-align: -6%;
+span.no-wrap {
+	white-space: nowrap;
 }
 
 button, a.button {
@@ -201,8 +180,62 @@ button, a.button {
 	}
 }
 
-span.no-wrap {
+
+//
+// Maths formatting
+//
+
+.math {
+	padding: 0 3px;
 	white-space: nowrap;
+
+	.term {
+		padding-right: 1px;
+		letter-spacing: 0;
+		font-family: $f-sec;
+		font-style: normal;
+	}
+
+	sup {
+		font-size: 0.75em;
+
+		i {
+			font-size: 1.2em;
+		}
+	}
+}
+
+.math i,
+i[m] {
+	font-family: $f-italic;
+	font-size: 1.1em;
+	letter-spacing: 2px;
+}
+
+table.frac {
+	position: relative;
+	display: inline-block;
+	vertical-align: -100%;
+	padding: 0 2px;
+	line-height: 1.1;
+	font-size: 1em;
+
+	td {
+		border: none;
+		text-align: center;
+	}
+
+	tr:first-child td {
+		border-bottom: 1px solid $c-font;
+	}
+}
+
+.symbol {
+	padding: 0 1px;
+	font-size: 1.3em;
+	font-weight: bold;
+	font-family: "Times New Roman";
+	vertical-align: -4%;
 }
 
 
@@ -237,27 +270,6 @@ i[class^='icon-'] {
 	&.icon-next:after {
 		transform: rotate(225deg);
 	} 
-}
-
-//
-// Components
-//
-table.frac {
-	vertical-align: text-top;
-	display: inline-block;
-	font-size: 1em;
-	position: relative;
-	top: -0.9em;
-	padding: 0 2px;
-
-	td {
-		border: none;
-		text-align: center;
-	}
-
-	tr:first-child td {
-		border-bottom: 1px solid $c-font;
-	}
 }
 
 //

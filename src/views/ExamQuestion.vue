@@ -31,17 +31,19 @@
 		</div>
 
 		<div class="row">
-			<div class="col-12">
+			<div class="col-12 problem">
 				<h2> Problem </h2>
-				<div v-if="questionParentText">
+				<p>
+				<span v-if="questionParentText">
 					<render-html>{{ questionParentText }}</render-html>
 					<br/>
-				</div>
-				<div v-if="questionData.addText">
+				</span>
+				<span v-if="questionData.addText">
 					<render-html>{{ questionData.addText }}</render-html>
 					<br/>
-				</div>
+				</span>
 				<render-html>{{ questionData.text }}</render-html>
+				</p>
 			</div>
 		</div>
 
@@ -60,7 +62,6 @@
 					v-if="questionData.ani"
 					:currentStep="solutionStep"
 					:questionref="questionRef"
-					:showedit="true"
 				></solution-ani>
 				<br/>
 				<grapher
@@ -114,6 +115,8 @@
 		},
 		methods: {
 			renderQuestion: function() {
+				this.currentStep = 0;
+				
 				this.title =
 					this.year +
 					(this.paper[0] === 'h' ? ' Higher' : ' Ordinary') +
@@ -142,6 +145,10 @@
 		.content-right a {
 			padding: 0 $w-pad;
 		}
+	}
+
+	.problem {
+		line-height: 1.5;
 	}
 
 	h4 {

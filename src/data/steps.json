@@ -1,13 +1,13 @@
 {
   "2019-h1-1-1-1": [
-    ["State the expression"],
+    ["State the equation"],
     ["Expand the expression", "Multiple out the brackets"],
     ["Add the like terms"],
-    ["Set the coefficient of <i>x</i> equal to 2 times the coefficient of <i>x</i><sup>2</sup>, as stated in the question"],
-    ["Rearrange the terms to calculate the value of <i>p</i>"]
+    ["Set the coefficient of <i m>x</i> equal to 2 times the coefficient of <i m>x</i><sup>2</sup>, as stated in the question"],
+    ["Rearrange the terms to calculate the value of <i m>p</i>"]
   ],
   "2019-h1-1-1-2": [
-    ["State the expression"],
+    ["State the equation"],
     [
       "Find a Common Multiple",
       "The easiest way to generate a Common Multiple for a set of fractions, is to mutliple together their <def term=\"denominator\">denominators</def>"
@@ -21,18 +21,18 @@
     ["Factorise and solve", "<router-link class=\"link-small\" to=\"/topics/factorisation\">Learn more about factorisation...</router-link>"]
   ],
   "2019-h1-1-2-1": [
-    ["Use the function <i>g</i>(<i>x</i>) to calculate values for <i>y</i>"],
-    ["Substitute values of <i>x</i> into <i>g</i>(<i>x</i>) to create several new equations"],
-    ["Calculate the value of y for each equation"],
-    ["Draw each pair of <i>x</i> and <i>y</i> values as points on the graph <br/> Connect these points to graph the line <i>g</i>(<i>x</i>)"]
+    ["Use the function <span class=\"math\"><i>g</i>(<i>x</i>)</span> to calculate values for <i m>y</i>"],
+    ["Substitute values of <i m>x</i> into <span class=\"math\"><i>g</i>(<i>x</i>)</i> to create several new equations"],
+    ["Calculate the value of <i m>y</i> for each equation"],
+    ["Draw each pair of <i m>x</i> and <i m>y</i> values as points on the graph <br/> Connect these points to graph the line <span class=\"math\"><i>g</i>(<i>x</i>)</span>"]
   ],
   "2019-h1-1-2-2": [
     [
-      "Substitute in the equations <i>f</i>(<i>x</i>) and <i>g</i>(<i>x</i>)",
+      "Substitute in the equations <i m>f</i>(<i m>x</i>) and <i m>g</i>(<i m>x</i>)",
       "Substitute the equations into the <def term=\"inequality\">inequality</def> stated in the question."
     ],
     [
-      "Substitute the value <i>x</i> = 1.9 into the inequality."
+      "Substitute the value <i m>x</i> = 1.9 into the inequality."
     ],
     [
       "Compute the value of each side of the inequality to verfiy the statement in the question."
@@ -40,11 +40,11 @@
   ],
   "2019-h1-1-3-1": [
     [
-      "Notice that the first two terms have a common multiple of 3x, and the second two "
+      "State the expression"
     ],
     [
-      "Divide the first two terms by 3<i>x</i>",
-      "Notice that the first two terms have a common factor of 3<i>x</i>. Divide both terms by this common factor."
+      "Divide the first two terms by 3<i m>x</i>",
+      "Notice that the first two terms have a common factor of 3<i m>x</i>. Divide both terms by this common factor."
     ],
     [
       "Divide the last two terms by 4",
@@ -52,7 +52,14 @@
     ],
     [
       "Complete the factorisation",
-      "Since the terms 3<i>x</i> and 4 are both multiplying (<i>y</i> &#8722; 3), the expression can be further reduced as shown."
+      "Since the terms 3<i m>x</i> and 4 are both multiplying <span class=\"math\">(<i>y</i> &#8722; 3)</span>, the expression can be further reduced as shown."
     ]
+  ],
+  "2019-h1-1-3-2": [
+    ["State the function <i m>g</i>(<i m>x</i>)", "Notice that <i m>g</i>(<i m>x</i>) is the same expression seen in part (a) but with the value of <i m>y</i> set to <span class=\"math\">ln<i>x</i></span>"],
+    ["Factorise the function", "Use the same process from part (a) to factorise the function."],
+    ["Substitute the value <span class=\"math\"><i>g</i>(<i>x</i>) = 0</span>, as stated in the question"],
+    ["Solve to find the value of <i m>x</i>", "Set both factors equal to 0 and solve to find the possible values of <i m>x</i>."]
   ]
 }
+

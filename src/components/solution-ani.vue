@@ -28,7 +28,8 @@
 							'selected': selected === term || multiSelect.includes(i),
 							'strike': term.strike,
 							'hidden': term.show < 2,
-							'show-edit': term.show === 1
+							'show-edit': term.show === 1,
+							'is-symbol': term.value && term.value.length > 1 && term.value[0] !== '&'
 						}
 					]"
 					:style="{
@@ -38,15 +39,14 @@
 						'font-size': fontSize + 'px'
 					}"
 					@mousedown="selectTerm(i)"
-				>
-					{{ term.value || '' }}
-				</span>
+					v-html="term.value || ''"
+				></span>
 			</div>
 
 			<div class="buttons" v-if="!demo">
 				<button
 					class="secondary"
-					:disabled="aniObject[step].length === 1"
+					:disabled="step === 0"
 					@click="replayStep()"> Replay </button>
 				<button
 					:class="['secondary', {'active': frameSlow }]"
@@ -54,103 +54,106 @@
 				> Slow </button>
 			</div>
 		</div>
-		
-		<div v-if="showedit">
-			<br/>
-			<button @click="editing = !editing"> Toggle Edit Mode </button>
-		</div>
-		<div class="controls" v-if="editing">
-			<div>
-				<button @click="encodeAnimation(aniObject, true)"> Log AniObject </button>
-			</div>
-			<div>
-				<button
-					:class="{ 'disabled': frame === 0 }"
-					@click="frame--; selected = null;"
-				> - </button>
-				Frame {{ frame + 1 }} / {{ aniObject[step].length }}
-				<button
-					:class="{ 'disabled': frame === aniObject[step].length - 1 }"
-					@click="frame++; selected = null;"
-				> + </button>
-				<button
-					v-if="frame === aniObject[step].length - 1"
-					@click="addFrame(); selected = null;"
-				> Add Frame </button>
-			</div>
-			<div>
-				<button
-					:class="{ 'disabled': step === 0 }"
-					@click="step--; selected = null;"
-				> - </button>
-				Step {{ step + 1 }} / {{ aniObject.length }}
-				<button
-					:class="{ 'disabled': step === aniObject.length - 1 }"
-					@click="step++; selected = null;"
-				> + </button>
-				<button
-					v-if="step === aniObject.length - 1"
-					@click="addStep(); selected = null"
-				> Add Step </button>
-			</div>
-			<div v-if="step !== 0 || frame !== 0">
-				<button @click="deleteFrame()">
-					Delete {{ aniObject[step].length === 1 ? 'Step' : 'Frame' }}
-				</button>
-				<br/></br>
-			</div>
-			<div>
-				<button
-					v-for="(termType, i) in TYPES"
-					@click="addTerm(i)"
-				>
-					Add {{ termType }}
-				</button>
-			</div>
-			<div class="edit-term" v-if="selected">
+
+
+		<!-- Remove for production -->
+			<span
+				style="font-size: 10px; float: right"
+				@click="editing = !editing"
+			> Edit </span>
+			<div class="controls" v-if="editing">
 				<div>
-					<button @click="editTerm('show', selected.show === 1 ? 2 : 1)">
-						{{ selected.show === 1 ? 'Show' : 'Hide' }} Term
+					<button @click="encodeAnimation(aniObject, true)"> Log AniObject </button>
+				</div>
+				<div>
+					<button
+						:class="{ 'disabled': frame === 0 }"
+						@click="frame--; selected = null;"
+					> - </button>
+					Frame {{ frame + 1 }} / {{ aniObject[step].length }}
+					<button
+						:class="{ 'disabled': frame === aniObject[step].length - 1 }"
+						@click="frame++; selected = null;"
+					> + </button>
+					<button
+						v-if="frame === aniObject[step].length - 1"
+						@click="addFrame(); selected = null;"
+					> Add Frame </button>
+				</div>
+				<div>
+					<button
+						:class="{ 'disabled': step === 0 }"
+						@click="step--; selected = null;"
+					> - </button>
+					Step {{ step + 1 }} / {{ aniObject.length }}
+					<button
+						:class="{ 'disabled': step === aniObject.length - 1 }"
+						@click="step++; selected = null;"
+					> + </button>
+					<button
+						v-if="step === aniObject.length - 1"
+						@click="addStep(); selected = null"
+					> Add Step </button>
+				</div>
+				<div v-if="step !== 0 || frame !== 0">
+					<button @click="deleteFrame()">
+						Delete {{ aniObject[step].length === 1 ? 'Step' : 'Frame' }}
 					</button>
-					<button @click="deleteTerm(selected)"> Delete Term </button>
-					<button @click="cloneTerm()"> Clone Term </button>
+					<br/></br>
 				</div>
-				<div v-if="typeof selected.length !== 'undefined'">
-					Length
-					<input
-						type="number"
-						:value="selected.length"
-						onfocus="this.select()"
-						@input="editTerm('length', parseInt($event.target.value) || 0)"
-					/>
+				<div>
+					<button
+						v-for="(termType, i) in TYPES"
+						@click="addTerm(i)"
+					>
+						Add {{ termType }}
+					</button>
 				</div>
-				<div v-if="typeof selected.value !== 'undefined'">
-					<div class="colour-select">
-						Color
-						<span
-							v-for="i in this.COLORS"
-							@click="editTerm('color', i - 1)"
-						></span>
-					</div>
+				<div class="edit-term" v-if="selected">
 					<div>
-						Styles:
-						<span
-							:class="{ 'active': selected.strike }"
-							@click="editTerm('strike', selected.strike === 0 ? 1 : 0)"
-						>
-							strike
-						</span>
-						<span
-							v-for="(cl, i) in CLASSES"
-							:class="{ 'active': selected.class === i }"
-							@click="editTerm('class', selected.class === i ? 0 : i)"
-						>
-							{{ cl.replace('-r', '-right') }}
-						</span>
+						<button @click="editTerm('show', selected.show === 1 ? 2 : 1)">
+							{{ selected.show === 1 ? 'Show' : 'Hide' }} Term
+						</button>
+						<button @click="deleteTerm(selected)"> Delete Term </button>
+						<button @click="cloneTerm()"> Clone Term </button>
+					</div>
+					<div v-if="typeof selected.length !== 'undefined'">
+						Length
+						<input
+							type="number"
+							:value="selected.length"
+							onfocus="this.select()"
+							@input="editTerm('length', parseInt($event.target.value) || 0)"
+						/>
+					</div>
+					<div v-if="typeof selected.value !== 'undefined'">
+						<div class="colour-select">
+							Color
+							<span
+								v-for="i in this.COLORS"
+								@click="editTerm('color', i - 1)"
+							></span>
+						</div>
+						<div>
+							Styles:
+							<span
+								:class="{ 'active': selected.strike }"
+								@click="editTerm('strike', selected.strike === 0 ? 1 : 0)"
+							>
+								strike
+							</span>
+							<span
+								v-for="(cl, i) in CLASSES"
+								:class="{ 'active': selected.class === i }"
+								@click="editTerm('class', selected.class === i ? 0 : i)"
+							>
+								{{ cl.replace('-r', '-right') }}
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		<!-- -->
 	</div>
 </template>
 
@@ -162,7 +165,6 @@
 		props: {
 			questionref: String,
 			currentStep: Number,
-			showedit: Boolean,
 			demo: Boolean
 		},
 		data: function() {
@@ -172,24 +174,29 @@
 				frame: 0,
 				frameSlow: false,
 				frameInterval: 0,
-				selected: null,
-				multiSelect: [],
-				editing: false,
-				shiftDown: false,
 				animationOff: true,
 				fontSize: 20,
-				height: 100
+				height: 100,
+
+				// Remove for production
+					selected: null,
+					multiSelect: [],
+					editing: false,
+					shiftDown: false
+				//
 			}
 		},
 		created: function() {
 			// Consts
 			this.TYPES = ['char', 'bar', 'sqrt'];
 			this.CLASSES = ['', 'sup', 'sup-r', 'sub-r', 'sub'];
-			this.FRAMELENGTHFAST = 800;
-			this.FRAMELENGTHSLOW = 1600;
+			this.FRAMELENGTHFAST = 1000;
+			this.FRAMELENGTHSLOW = 1800;
 			this.COLORS = 5;
 			this.MAXFONT = 20;
-			this.NOSCROLL = e => [32, 38, 40].includes(e.keyCode) && e.preventDefault();
+			// Remove for production
+				this.NOSCROLL = e => [32, 38, 40].includes(e.keyCode) && e.preventDefault();
+			//
 		},
 		mounted: function() {
 			this.renderQuestion();
@@ -199,16 +206,18 @@
 				this.renderQuestion();
 			},
 
-			editing: function(newVal) {
-				clearInterval(this.frameInterval);
-				this.step = this.currentStep;
-				this.frame = 0;
-				if (newVal) {
-					window.addEventListener('keydown', this.NOSCROLL);
-				} else {
-					window.removeEventListener('keydown', this.NOSCROLL);
-				}
-			},
+			// Remove for production
+				editing: function(newVal) {
+					clearInterval(this.frameInterval);
+					this.step = this.currentStep;
+					this.frame = 0;
+					if (newVal) {
+						window.addEventListener('keydown', this.NOSCROLL);
+					} else {
+						window.removeEventListener('keydown', this.NOSCROLL);
+					}
+				},
+			//
 
 			currentStep: function(newVal, oldVal) {
 				if (this.editing) {
@@ -252,70 +261,72 @@
 				setTimeout(() => this.animationOff = false);
 			},
 
-			keyListener: function(event) {
-				if (this.editing && this.selected) {
-					if (this.shiftDown) {
-						switch(event.keyCode) {
-							// Backspace
-							case 8: this.editTerm('strike', this.selected.strike ? 0 : 1); return;
-							// Arrow keys
-							case 37: this.editTerm('color', this.selected.color === 0 ? this.COLORS : '--'); return;
-							case 39: this.editTerm('color', this.selected.color === this.COLORS ? 0 : '++'); return;
-							case 38: {
-								if (this.selected.type === 0) {
-									this.editTerm('class', this.selected.class === this.CLASSES.length - 1 ? 0 : '++');
-								} else {
-									this.editTerm('show', 2);
-									this.editTerm('length', '++');
+			// Remove for production
+				keyListener: function(event) {
+					if (this.editing && this.selected) {
+						if (this.shiftDown) {
+							switch(event.keyCode) {
+								// Backspace
+								case 8: this.editTerm('strike', this.selected.strike ? 0 : 1); return;
+								// Arrow keys
+								case 37: this.editTerm('color', this.selected.color === 0 ? this.COLORS : '--'); return;
+								case 39: this.editTerm('color', this.selected.color === this.COLORS ? 0 : '++'); return;
+								case 38: {
+									if (this.selected.type === 0) {
+										this.editTerm('class', this.selected.class === this.CLASSES.length - 1 ? 0 : '++');
+									} else {
+										this.editTerm('show', 2);
+										this.editTerm('length', '++');
+									}
+									return;
 								}
-								return;
-							}
-							case 40: {
-								if (this.selected.type === 0) {
-									this.editTerm('class', this.selected.class === 0 ? this.CLASSES.length - 1 : '--');
-								} else if (this.selected.length <= 1) {
-									this.editTerm('length', 0);
-									this.editTerm('show', 1);
-								} else {
-									this.editTerm('length', '--');
+								case 40: {
+									if (this.selected.type === 0) {
+										this.editTerm('class', this.selected.class === 0 ? this.CLASSES.length - 1 : '--');
+									} else if (this.selected.length <= 1) {
+										this.editTerm('length', 0);
+										this.editTerm('show', 1);
+									} else {
+										this.editTerm('length', '--');
+									}
+									return;
 								}
-								return;
+								// Ctrl
+								case 16: this.shiftDown = false; return;
 							}
-							// Ctrl
-							case 16: this.shiftDown = false; return;
+						}
+						if (
+							event.key.match(/^[^\"\[\]]$/i) &&
+							event.keyCode !== 32 // spacebar
+						) {
+							if (this.selected.type === 0) {
+								this.editTerm('value', event.key);
+							}
+						} else {
+							switch(event.keyCode) {
+								// Backspace
+								case 8: this.editTerm('show', this.selected.show === 1 ? 2 : 1); break;
+								// Tab
+								case 9: {
+									event.preventDefault();
+									let selectedIndex =
+											this.aniObject[this.step][this.frame]
+												.findIndex(t => t === this.selected);
+									this.selected =
+										this.aniObject[this.step][this.frame][selectedIndex + (this.shiftDown ? -1 : 1)] || 
+										this.aniObject[this.step][this.frame][0];
+									break;
+								}
+								// Arrow keys
+								case 37: this.editTerm('x', '--'); break;
+								case 39: this.editTerm('x', '++'); break;
+								case 38: this.editTerm('y', '--'); break;
+								case 40: this.editTerm('y', '++'); break;
+							}
 						}
 					}
-					if (
-						event.key.match(/^[^\"\[\]]$/i) &&
-						event.keyCode !== 32 // spacebar
-					) {
-						if (this.selected.type === 0) {
-							this.editTerm('value', event.key);
-						}
-					} else {
-						switch(event.keyCode) {
-							// Backspace
-							case 8: this.editTerm('show', this.selected.show === 1 ? 2 : 1); break;
-							// Tab
-							case 9: {
-								event.preventDefault();
-								let selectedIndex =
-										this.aniObject[this.step][this.frame]
-											.findIndex(t => t === this.selected);
-								this.selected =
-									this.aniObject[this.step][this.frame][selectedIndex + (this.shiftDown ? -1 : 1)] || 
-									this.aniObject[this.step][this.frame][0];
-								break;
-							}
-							// Arrow keys
-							case 37: this.editTerm('x', '--'); break;
-							case 39: this.editTerm('x', '++'); break;
-							case 38: this.editTerm('y', '--'); break;
-							case 40: this.editTerm('y', '++'); break;
-						}
-					}
-				}
-			},
+				},
+			//
 
 			setScale: function(step) {
 				let maxX = 0;
@@ -344,7 +355,7 @@
 
 
 			//
-			//	Terms
+			//	Terms - Remove all for production
 			//
 			
 			addTerm: function(type, params = {}) {
@@ -441,6 +452,15 @@
 				}
 				term[property] = value;
 				
+				if (term.x < 0) {
+					term.x = 0;
+					return;
+				}
+				if (term.y < 0) {
+					term.y = 0;
+					return;
+				}
+				
 				let termIndex = this.aniObject[this.step][this.frame].findIndex(t => t === term),
 						prevFrame = this.getNextFrame(true),
 						nextFrame = this.getNextFrame(),
@@ -505,7 +525,7 @@
 
 
 			//
-			// Frames
+			// Frames remove all for production
 			//
 			
 			addFrame: function() {
@@ -580,13 +600,15 @@
 				}
 			},
 			
-			addStep: function() {
-				this.addFrame();
-				let newFrame = this.aniObject[this.step].pop();
-				this.aniObject.push([newFrame]);
-				this.step++;
-				this.frame = 0;
-			},
+			// Remove for production
+				addStep: function() {
+					this.addFrame();
+					let newFrame = this.aniObject[this.step].pop();
+					this.aniObject.push([newFrame]);
+					this.step++;
+					this.frame = 0;
+				},
+			//
 
 			replayStep: function() {
 				if (this.step > 0) {
@@ -643,6 +665,21 @@
 										}
 									}
 								}
+								let symbols = {
+									'N': 'ln',			// Natural Log
+									'L': 'log',			// Log base 10
+									'P': '&#960;',	// Pi
+									'E': '&#8800;',	// Not equal to
+									'T': '&#952;',	// Thetha
+									'-': '&#8722;', // Minus
+									'I': '&#8734',	// Infinity
+									'M': '&#177;',	// Plus or minus
+									'F': '&#8804;',	// Less than or equal to
+									'G': '&#8805;',	// Greater than or equal to
+								}
+								if (symbols[term.value]) {
+									term.value = symbols[term.value];
+								}
 								frame.push(term);
 							}
 							return frame;
@@ -650,39 +687,55 @@
 					);
 			},
 			
-			encodeAnimation: function(aniObject, log) {
-				let animation = aniObject
-					.map(step =>
-						step.map(frame =>
-							frame.map(term => {
-								if (term.show) {
-									return [
-										term.type,
-										(term.type === 0 ? term.value : term.length),
-										term.x,
-										term.y,
-										term.color,
-										term.strike,
-										term.class,
-										term.show
-									].map(v => {
-										if (typeof v === 'string' || v < 10) {
-											return v;
-										}
-										return String.fromCharCode(v + (v > 35 ? 29 : 87));
-									}).join('');
-								}
-								return '_' + term.type;
-							}).join('')
-						).join('|')
-					).join('||');
-				if (log) {
-					console.log(animation);
-				} else {
-					return animation;
+			// Remove for production
+				encodeAnimation: function(aniObject, log) {
+					let symbols = {
+						'ln': 'N',			// Natural Log
+						'log': 'L',			// Log base 10
+						'&#960;': 'P',	// Pi
+						'&#8800;': 'E',	// Not equal to
+						'&#952;': 'T',	// Thetha
+						'&#8722;': '-', // Minus
+						'&#8734': 'I',	// Infinity
+						'&#177;': 'M',	// Plus or minus
+						'&#8804;': 'F',	// Less than or equal to
+						'&#8805;': 'G',	// Greater than or equal to
+					}
+					let animation = aniObject
+						.map(step =>
+							step.map(frame =>
+								frame.map(term => {
+									if (term.show) {
+										return [
+											term.type,
+											(term.type === 0 ? term.value : term.length),
+											term.x,
+											term.y,
+											term.color,
+											term.strike,
+											term.class,
+											term.show
+										].map(v => {
+											if (symbols[v]) {
+												return symbols[v];
+											} else if (typeof v === 'string' || v < 10) {
+												return v;
+											}
+											return String.fromCharCode(v + (v > 35 ? 29 : 87));
+										}).join('');
+									}
+									return '_' + term.type;
+								}).join('')
+							).join('|')
+						).join('||');
+					if (log) {
+						console.log(animation);
+					} else {
+						return animation;
+					}
 				}
 			}
-		}
+		//
 	};
 </script>
 
@@ -745,6 +798,7 @@
 			color $l-ani,
 			width $l-ani,
 			opacity $l-ani,
+			transform $l-ani,
 			font-size $l-ani;
 
 		.equation-bg.frame-slow & {
@@ -754,6 +808,7 @@
 				color $l-ani-slow,
 				width $l-ani-slow,
 				opacity $l-ani-slow,
+				transform $l-ani-slow,
 				font-size $l-ani;
 		}
 
@@ -809,97 +864,105 @@
 			z-index: 0;
 			pointer-events: none;
 		}
+
+		&.is-symbol {
+			transform: scale(0.9);
+			padding-right: 4%;
+			line-height: 1;
+		}
 	}
 
-	.equation-contain.editing {
-		border-color: $c-prim;
-		
-		.term {
-			user-select: none;
-			transition-duration: 0.1s;
-			cursor: pointer;
+	// Remove for production
+		.equation-contain.editing {
+			border-color: $c-prim;
 			
-			&:hover {
-				outline: 1px solid $c-prim;
-				outline-offset: -2px;
-			}
-			
-			&.selected {
-				background: transparentize($c-prim, 0.8);
-			}
+			.term {
+				user-select: none;
+				transition-duration: 0.1s;
+				cursor: pointer;
 				
-			&.hidden.show-edit {
-				display: inline-block;
-				pointer-events: all;
-				opacity: 0.3;
+				&:hover {
+					outline: 1px solid $c-prim;
+					outline-offset: -2px;
+				}
 				
-				&.bar:after {
+				&.selected {
+					background: transparentize($c-prim, 0.8);
+				}
+					
+				&.hidden.show-edit {
+					display: inline-block;
+					pointer-events: all;
 					opacity: 0.3;
+					
+					&.bar:after {
+						opacity: 0.3;
+					}
 				}
 			}
 		}
-	}
 
-	.controls {
-		font-size: $f-size-sm;
+		.controls {
+			font-size: $f-size-sm;
 
-		button {
-			padding: 5px 10px;
-			border-radius: 0;
-			border: 1px solid $c-border;
-			margin: 0 5px;
-			color: $c-font;
-			font-size: 1em;
-			background: $c-bg;
-		}
+			button {
+				padding: 5px 10px;
+				border-radius: 0;
+				border: 1px solid $c-border;
+				margin: 0 5px;
+				color: $c-font;
+				font-size: 1em;
+				background: $c-bg;
+			}
 
-		&>div {
-			margin-top: 5px;
-		}
-		
-		.edit-term {
-			margin-top: 10px;
+			&>div {
+				margin-top: 5px;
+			}
 			
-			div {
+			.edit-term {
 				margin-top: 10px;
+				
+				div {
+					margin-top: 10px;
+				}
+				
+				&>div:not(:first-child) {
+					padding-left: 10px;
+				}
 			}
 			
-			&>div:not(:first-child) {
-				padding-left: 10px;
+			input[type=text],
+			input[type=number] {
+				width: 3em;
+				padding: 3px;
+				margin-left: 5px;
 			}
-		}
-		
-		input[type=text],
-		input[type=number] {
-			width: 3em;
-			padding: 3px;
-			margin-left: 5px;
-		}
-		
-		.colour-select span {
-			display: inline-block;
-			padding: 10px;
-			border-radius: 100%;
-			margin: 2px;
-			vertical-align: sub;
+			
+			.colour-select span {
+				display: inline-block;
+				padding: 10px;
+				border-radius: 100%;
+				margin: 2px;
+				vertical-align: sub;
 
-			&:nth-child(1) { background: $c-font; }
-			&:nth-child(2) { background: $c-highlight-1; }
-			&:nth-child(3) { background: $c-highlight-2; }
-			&:nth-child(4) { background: $c-highlight-3; }
-			&:nth-child(5) { background: $c-highlight-4; }
-		}
-		
-		span {
-			font-size: 0.8em;
-			padding: 0 4px;
-			user-select: none;
-			cursor: pointer;
+				&:nth-child(1) { background: $c-font; }
+				&:nth-child(2) { background: $c-highlight-1; }
+				&:nth-child(3) { background: $c-highlight-2; }
+				&:nth-child(4) { background: $c-highlight-3; }
+				&:nth-child(5) { background: $c-highlight-4; }
+			}
 			
-			&.active {
-				color: $c-prim;
-				font-weight: bold;
+			span {
+				font-size: 0.8em;
+				padding: 0 4px;
+				user-select: none;
+				cursor: pointer;
+				
+				&.active {
+					color: $c-prim;
+					font-weight: bold;
+				}
 			}
 		}
-	}
+	//
 </style>

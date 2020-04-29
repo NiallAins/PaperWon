@@ -11,13 +11,13 @@
             "parts": [
               {
                 "label": "(a)",
-                "text": "In the <def term=\"expand\">expansion</def> of (2<i>x</i> + 1)(<i>x</i><sup>2</sup> + <i>px</i> + 4), where <i>p</i> &#8712; <def term=\"natural_number\"><span class=\"font-symbol\">&#8469;</span></def>, the <def term=\"coefficient\">coefficient</def> of <i>x</i> is twice the coefficient of <i>x</i><sup>2</sup>. Find the value of <i>p</i>.",
+                "text": "In the <def term=\"expand\">expansion</def> of <span class=\"math\">(2<i>x</i> + 1)(<i>x</i><sup>2</sup> + <i>p</i><i>x</i> + 4)</span>, where <i m>p</i> &#8712; <def term=\"natural_number\"><span class=\"symbol\">&#8469;</span></def>, the <def term=\"coefficient\">coefficient</def> of <i m>x</i> is twice the coefficient of <i m>x</i><sup>2</sup>. Find the value of <i m>p</i>.",
                 "ani": true,
                 "next": "2019/h1/1-1-2"
               },
               {
                 "label": "(b)",
-                "text": "Solve the equation <table class=\"frac\"><tr><td>3 / 2</td></tr><tr><td>2<i>x</i> + 1</td></tr></table> + <table class=\"frac\"><tr><td>2</td></tr><tr><td>5</td></tr></table> = <table class=\"frac\"><tr><td>2</td></tr><tr><td>3<i>x</i> - 1</td></tr></table> where <i>x</i> &#8800; &#8722;<table class=\"frac\"><tr><td>1</td></tr><tr><td>2</td></tr></table>, <table class=\"frac\"><tr><td>1</td></tr><tr><td>3</td></tr></table>, and <i>x</i> &#8712; <def term=\"real_number\"><span class=\"font-symbol\">&#8477;</span></def>.",
+                "text": "Solve the equation <span class=\"math\"><table class=\"frac\"><tr><td>3</td></tr><tr><td>2<i>x</i> + 1</td></tr></table> + <table class=\"frac\"><tr><td>2</td></tr><tr><td>5</td></tr></table> = <table class=\"frac\"><tr><td>2</td></tr><tr><td>3<i>x</i>&nbsp;&#8722;&nbsp;1</td></tr></table></span> where <span class=\"math\"><i>x</i>&nbsp;&#8800;&nbsp;&#8722;<table class=\"frac\"><tr><td>1</td></tr><tr><td>2</td></tr></table>,<table class=\"frac\"><tr><td>1</td></tr><tr><td>3</td></tr></table></span>, and <i m>x</i> &#8712; <def term=\"real_number\"><span class=\"symbol\">&#8477;</span></def>.",
                 "ani": true,
                 "prev": "2019/h1/1-1-1",
                 "next": "2019/h1/1-2-1"
@@ -27,12 +27,12 @@
           {
             "marks": 25,
             "topics": ["graphs", "functions", "induction"],
-            "text": "The graph of the function <i>f</i>(<i>x</i>) = 3<sup><i>x</i></sup>, where <i>x</i> &#8712; <def term=\"real_number\"><span class=\"font-symbol\">&#8477;</span></def>, cuts the <i>y</i>‐axis at (0, 1) as shown in the diagram below.",
+            "text": "The graph of the function <span class=\"math\"><i>f</i>(<i>x</i>) = 3<sup><i>x</i></sup></span>, where <i m>x</i> &#8712; <def term=\"real_number\"><span class=\"symbol\">&#8477;</span></def>, cuts the <i m>y</i>‐axis at (0, 1) as shown in the diagram below.",
             "graph": "2019-h1-1-2-1",
             "parts": [
               {
                 "label": "(a) (i)",
-                "text": "Draw the graph of the function <i>g</i>(<i>x</i>) = 4 <i>x</i> + 1 on the diagram.",
+                "text": "Draw the graph of the function <i m>g</i>(<i m>x</i>) = 4 <i m>x</i> + 1 on the diagram.",
                 "graph": true,
                 "ani": true,
                 "prev": "2019/h1/1-1-2",
@@ -40,8 +40,8 @@
               },
               {
                 "label": ">(ii)",
-                "text": "Use <def term=\"substitute\">substitution</def> to verify that <i>f</i>(<i>x</i>) < <i>g</i>(<i>x</i>), for <i>x</i> = 1.9.",
-                "addText": "The function <i>g</i>(<i>x</i>) = 4 <i>x</i> + 1.",
+                "text": "Use <def term=\"substitute\">substitution</def> to verify that <i m>f</i>(<i m>x</i>) < <i m>g</i>(<i m>x</i>), for <i m>x</i> = 1.9.",
+                "addText": "The function <i m>g</i>(<i m>x</i>) = 4 <i m>x</i> + 1.",
                 "graph": true,
                 "ani": true,
                 "prev": "2019/h1/1-2-1",
@@ -49,8 +49,8 @@
               },
               {
                 "label": "(b)",
-                "text": "Prove, using induction, that <i>f</i>(<i>n</i>) <def term=\"greater_than_or_equal_to\">&#8805;</def> <i>g</i>(<i>n</i>), where <i>n</i> &#8805; 2 and <i>n</i> &#8712; <def term=\"natural_number\"><span class=\"font-symbol\">&#8469;</span></def>",
-                "addText": "The function <i>g</i>(<i>x</i>) = 4 <i>x</i> + 1.",
+                "text": "Prove, using induction, that <i m>f</i>(<i m>n</i>) <def term=\"greater_than_or_equal_to\">&#8805;</def> <i m>g</i>(<i m>n</i>), where <i m>n</i> &#8805; 2 and <i m>n</i> &#8712; <def term=\"natural_number\"><span class=\"symbol\">&#8469;</span></def>",
+                "addText": "The function <i m>g</i>(<i m>x</i>) = 4 <i m>x</i> + 1.",
                 "graph": "2019-h1-1-2-2",
                 "ani": true,
                 "prev": "2019/h1/1-2-2",
@@ -64,21 +64,21 @@
             "parts": [
               {
                 "label": "(a)",
-                "text": "Factorise fully: &nbsp; 3<i>xy</i> &#8722; 9<i>x</i> + 4<i>y</i>&#8722; 12.",
+                "text": "Factorise fully: &nbsp; 3<i m>xy</i> &#8722; 9<i m>x</i> + 4<i m>y</i>&#8722; 12.",
                 "ani": true,
                 "prev": "2019/h1/1-2-3",
                 "next": "2019/h1/1-3-2"
               },
               {
                 "label": "(b)",
-                "text": "<i>g</i>(<i>x</i>) = 3<i>x</i>ln<i>x</i> &#8722; 9<i>x</i> + 4ln<i>x</i>&#8722; 12.<br/>Using your answer from <em>part (a)</em> or otherwise, solve <i>g</i>(<i>x</i>) = 0.",
+                "text": "<span class=\"math\"><i>g</i>(<i>x</i>) = 3<i>x</i><span class=\"term\">ln</span><i>x</i>&nbsp;&#8722;&nbsp;9<i>x</i> + 4<span class=\"term\">ln</span><i>x</i>&nbsp;&#8722;&nbsp;12</span>.<br/>Using your answer from <em>part (a)</em> or otherwise, solve <i m>g</i>(<i m>x</i>) = 0.",
                 "ani": true,
                 "prev": "2019/h1/1-3-1",
                 "next": "2019/h1/1-3-3"
               },
               {
                 "label": "(c)",
-                "text": "Evaluate <i>g'</i>(<i>e</i>) correct to 2 decimal places.",
+                "text": "Evaluate <i m>g'</i>(<i m>e</i>) correct to 2 decimal places.",
                 "ani": true,
                 "prev": "2019/h1/1-3-2",
                 "next": "2019/h1/1-4-1"

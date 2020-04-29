@@ -20,7 +20,7 @@
 									<td colspan="2">
 										Section {{ String.fromCharCode(sIndex + 65) }}
 										<br>
-										<i class="sans"> {{ section.title }}</i>
+										<i> {{ section.title }}</i>
 									</td>
 								</tr>
 								<tr>
@@ -160,7 +160,7 @@
 
 		p {
 			max-width: $w-page;
-			margin: 0 auto ($w-pad * 2);
+			margin: 0 auto #{$w-pad * 2};
 		}
 	}
 

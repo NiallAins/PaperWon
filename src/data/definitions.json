@@ -20,14 +20,14 @@
     "link": ["/topics/number-sets", "More on Number Sets"]
   },
   "inequality": {
-    "def": "Whereas an equation shows two values which are equal to each other, an inequality show two values which not always equal.<br/><br/>The first value may be <br/>- <i class=\"sans\">greater than</i><br/>- <i class=\"sans\">less than</i><br/>- <i class=\"sans\">greater than or equal to</i><br/>&nbsp;&nbsp;or<br/>- <i class=\"sans\">less than or equal to</i><br/>the second value."
+    "def": "Whereas an equation shows two values which are equal to each other, an inequality show two values which not always equal.<br/><br/>The first value may be <br/>- <i>greater than</i><br/>- <i>less than</i><br/>- <i>greater than or equal to</i><br/>&nbsp;&nbsp;or<br/>- <i>less than or equal to</i><br/>the second value."
   },
   "less_than_or_equal_to": {
-    "def": "The value of to the left side of this symbol is <i class=\"sans\">less than or equal to</i> the value to the right side.",
+    "def": "The value of to the left side of this symbol is <i>less than or equal to</i> the value to the right side.",
     "hideInDefPage": true
   },
   "greater_than_or_equal_to": {
-    "def": "The value to the left side of this symbol is <i class=\"sans\">greater than or equal to</i> the value to the right side.",
+    "def": "The value to the left side of this symbol is <i>greater than or equal to</i> the value to the right side.",
     "hideInDefPage": true
   },
   "expand": {

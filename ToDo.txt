@@ -1,9 +1,21 @@
 StepAni
-  - Copy
-  - Speed
-Papers
-  - Style list
+  - Fix left border bug
+  - Fix variable total height bug
 ExamPaper
-  - Highlist current question
-  - Scroll To question
   - Small screen contents
+ExamQuestion
+  - Add topics / more study section
+  - Fix question part number bug
+  - remove auto playing animation?
+SolutionAni
+  - decide on starting step protocal
+  - decide on animation of backwards steps / replaying steps / overanimation issue
+Process
+ - Best practises for term definition data
+ - Best practices for what / how to animate solutions
+ - Best practices for step title vs text
+ - Best practices for references topics
+ - Best practices for writing solution walkthrough
+ - Best practices for using colour in animation
+Grapher
+ - make interactive

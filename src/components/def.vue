@@ -12,7 +12,7 @@
 			<render-html>
 				{{ termObj.def }}
 				<span v-if="termObj.example" class="example">
-					<i class="sans">Ex.</i> {{ termObj.example }}
+					<i>Ex.</i> {{ termObj.example }}
 				</span>
 			</render-html>
 		  <router-link
@@ -52,6 +52,7 @@
 
 		&:hover span {
 			color: inherit;
+			cursor: default;
 		}
 	}
 
@@ -61,33 +62,30 @@
 		&>span {
 			position: relative;
 			z-index: $z-dropdown - 1;
-			transition: color $l-trans ease $l-ani;
 		}
 		
 		&:before {
 			content: '';
 			position: absolute;
-			left: -3px; 
+			left: -2px; 
 			top: -5px;
-			bottom: -3px;
+			bottom: -4px;
 			z-index: $z-dropdown - 1;
-			width: calc(100% + 6px);
+			width: calc(100% + 4px);
 			border-bottom: 3px solid $c-prim;
 			border-radius: 5px;
 			transition:
-				width $l-trans ease $l-ani,
-				visibility $l-trans ease $l-ani,
-				left $l-trans ease $l-ani,
-				border-radius $l-trans ease $l-ani,
-				background-color $l-trans ease $l-ani;
+				width $l-trans,
+				visibility $l-trans,
+				left $l-trans,
+				border-radius $l-trans,
+				background-color $l-trans;
 		}
 
 		&:hover {
 			&>span {
 				color: $c-bg;
 				z-index: $z-dropdown;
-				transition: none;
-				cursor: none;
 			}
 			
 			&:before {
@@ -98,7 +96,10 @@
 				border-radius: 5px 5px 0 0;
 				background-color: $c-prim;
 				transition:
-					all $l-trans ease $l-ani,
+					width $l-trans ease $l-ani,
+					visibility $l-trans ease $l-ani,
+					left $l-trans ease $l-ani,
+					border-radius $l-trans ease $l-ani,
 					background-color $l-trans;
 			}
 			
@@ -107,13 +108,18 @@
 				visibility: visible;
 				opacity: 1;
 				@include shadow;
+				transition:
+					box-shadow $l-trans ease $l-ani,
+					opacity $l-trans ease $l-ani,
+					left $l-trans ease $l-ani,
+					visibility 0s linear $l-ani;
 			}
 		}
 
 		.def-box {
 			position: absolute;
 			left: 0px;
-			top: calc(1em + 9px);
+			top: calc(1em + 10px);
 			z-index: $z-dropdown;
 			visibility: hidden;
 			opacity: 0;
@@ -124,10 +130,10 @@
 			white-space: normal;
 			background: white;
 			transition:
-				box-shadow $l-trans ease $l-ani,
-				opacity $l-trans ease $l-ani,
-				left $l-trans ease $l-ani,
-				visibility 0s linear $l-ani;
+				box-shadow $l-trans,
+				opacity $l-trans,
+				left $l-trans,
+				visibility 0s;
 
 			&.has-link {
 				padding-bottom: 40px;
