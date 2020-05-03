@@ -121,7 +121,7 @@
       &:first-child h3:before {
         content: '';
         position: absolute;
-        top: -20px;
+        top: -30px;
         left: -25px;
         bottom: 50%;
         width: 4px;
@@ -159,6 +159,8 @@
       }
       
       &.active {
+        cursor: auto;
+
         h3 {
           transform: scale(1);
           color: $c-font;

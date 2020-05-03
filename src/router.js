@@ -39,11 +39,6 @@ let router = new Router({
       component: Topics
     },
     {
-      path: '/definitions',
-      name: 'definitions',
-      component: Definitions
-    },
-    {
       path: '/definitions/:searchterm',
       name: 'definitions',
       component: Definitions,

@@ -1,16 +1,7 @@
 ExamPaper
   - Small screen contents
-ExamQuestion
-  - remove auto playing animation?
-SolutionAni
-  - decide on starting step protocal
-  - decide on animation of backwards steps / replaying steps / overanimation issue
-Process
- - Best practises for term definition data
- - Best practices for what / how to animate solutions
- - Best practices for step title vs text
- - Best practices for references topics
- - Best practices for writing solution walkthrough
- - Best practices for using colour in animation
 Grapher
  - make interactive
+
+Bug
+  - Change to slow mid step, doesnt reset interval timing to slow

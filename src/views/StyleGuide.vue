@@ -19,6 +19,15 @@
     </div>
 
     <br/><br/>
+    Animation debugger
+    <input type="text" @input="debugAni($event.target.value)"/>
+    <br/><br/>
+    <pre
+      class="aniFormater"
+      v-html="debugAniOut"
+    ></pre>
+
+    <br/><br/>
     <h3> Style Guide </h3>
     <br/>
 
@@ -207,7 +216,8 @@
       return {
         eqin: '',
         eqout: '',
-        forjson: true
+        forjson: true,
+        debugAniOut: ''
       }
     },
     created: function() {
@@ -225,6 +235,7 @@
         "ln": "<span class=\"term\">ln</span>",
         "-": "&nbsp;&#8722;&nbsp;",
         "−": "&nbsp;&#8722;&nbsp;",
+        "'": "&#8242;",
         "pi": "&#960;",
         "thetha": "&#952;",
         "integral": "&#8747;",
@@ -302,6 +313,14 @@
         });
         str = '<span class="math">' + str.join('') + '</span>';
         this.eqout = str;
+      },
+
+      debugAni: function(inp) {
+        this.debugAniOut = inp
+          .replace(/_./g, '$&      ')
+          .replace(/\|/g, '\n')
+          .replace(/.(.).{6}/g, '   $1 $&')
+
       }
     }
   }
@@ -344,6 +363,10 @@
       padding: $w-pad;
       min-height: 2em;
     }
+  }
+
+  .aniFormater {
+    font-size: 10px;
   }
 
   .font {

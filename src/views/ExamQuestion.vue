@@ -53,7 +53,7 @@
 				<p>
 					Learn more about the concepts covered in this question:
 					<ul>
-						<li v-for="t in questionTopics">
+						<li v-for="t in questionData.topics">
 							<router-link class="link" :to="'/topics/' + t">
 								{{ t }}
 							</router-link>
@@ -115,7 +115,6 @@
 				questionData: {},
 				questionRef: '',
 				questionParentText: '',
-				questionTopics: [],
 				title: '',
 				sectionNum: '',
 				questionNum: '',
@@ -147,7 +146,6 @@
 
 				let questionParentData = paperData[this.year][this.paper][this.sectionNum - 1].questions[this.questionNum - 1];
 				this.questionParentText = questionParentData.text;
-				this.questionTopics = questionParentData.topics;
 				this.questionData = questionParentData.parts[ questionParts[2] - 1];
 			}
 		}

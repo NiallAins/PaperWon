@@ -60,6 +60,31 @@
     ["Factorise the function", "Use the same process from part (a) to factorise the function."],
     ["Substitute the value <span class=\"math\"><i>g</i>(<i>x</i>) = 0</span>, as stated in the question"],
     ["Solve to find the value of <i m>x</i>", "Set both factors equal to 0 and solve to find the possible values of <i m>x</i>."]
+  ],
+  "2019-h1-1-3-3": [
+    ["State the function <i m>g</i>(<i m>x</i>)"],
+    [
+      "Begin deriving the function starting with the first term",
+      "Use the <i>Product Rule</i> to seperate <span class=\"math\">3<i>x</i><span class=\"term\">ln</span><i>x</i></span> into two sepearte parts before deriving."
+    ],
+    [
+      "Complete the derivation of the first term",
+      "Note that the derivitive of <span class=\"math\"><span class=\"term\">ln</span><i>x</i> = <table class=\"frac\"><tr><td>1</td></tr><tr><td><i>x</i></td></tr></table></span>"
+    ],
+    ["Derive the remaining terms of the function"],
+    ["Substitute in <i m>e</i> as the value of <i m>x</i>, as stated in the question"],
+    [
+      "Simply the equation",
+      "Note that <span class=\"math\"><span class=\"term\">ln</span><i>e</i></span>, the natural log of <i m>e</i> is equal to 1"
+    ],
+    [
+      "Calculate the final value of <i m>g</i>(<i m>x</i>)",
+      "Use a calculater to get the final value of the equation"
+    ],
+    [
+      "Round to answer to two decimal places",
+      "Round your final value, as stated in the question. Note that .528 rounds up to .53."
+    ]
   ]
 }
 

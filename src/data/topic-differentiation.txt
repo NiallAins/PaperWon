@@ -1,0 +1,36 @@
+Topics
+
+fractions
+derivations
+integrations
+logarithims
+graphs and functions
+factorisation
+Indices
+
+
+//Logs
+
+logb(x) = y  =>  b^y = x
+x > 0, b > 0, b != 1
+
+logb(xz) = y  =>  logb(x) + logb(z) = y
+
+lnx = loge(x)
+lnx = y  =>  e^y = x
+
+
+// Derivation
+
+xy    => x'y + y'x
+x/y   => x'y + y'x / y^2
+3x    =>  3
+3x^5  =>  15px^4
+e^x   => e^x
+e^3x  =>  3e^3x
+3^x   =>  3^x ln3
+sinx  =>  cosx
+cosx  => -sinx
+tanx  => sec^2(x)
+ln(x)  =>  1/x
+logb(x)  => 1/xlnb

@@ -1,0 +1,50 @@
+Site Goals:
+  - Primary
+   - Exam papers questions animated
+    - Interactive widgets; tangeable, dymanic learning
+  - Secondary
+    - LC concepts animated
+    - Concepts explained
+Avoid:
+  - Complete maths course
+  - Tutoring, video lessons
+  - Static route learning
+
+Site Niche:
+  Self paced, minimalistic learning
+  Visual explanations
+  Everything you need for an exam question in one page
+
+
+Animation Standards
+ - First frame static
+ - Colour variables, change colour for different indices
+ - Match function colours with graph colours
+ - Animate one term at a time
+ - Dont change term position and value at once
+
+Definitions Standards
+  - Source from wikipedia, simply for LC context
+
+Step list Standards
+  - single statement for title, with no full stop
+  - puncuation in text
+
+Topics
+  - Statistics and Probability
+  - Geometry
+    - Areas volumes, angles, theroms
+  - Trigonomatry
+  - Graphs (Co-ordinate geometry)
+  - Functions
+  - Number Systems
+  - Factorisation
+  - Inequalities
+  - Complex Numbers
+
+  - Indices
+  - Surds
+  - Logarithims
+
+  - Derivation
+  - Integration

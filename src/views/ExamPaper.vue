@@ -34,7 +34,7 @@
 								>
 									<td> {{ qIndex + 1 }} </td>
 									<td>
-										<span v-for="(topic, tIndex) in question.topics">
+										<span v-for="(topic, tIndex) in questionTopics[sIndex][qIndex]">
 											<span v-if="tIndex > 0">, </span>
 											<router-link
 												class="link-small"
@@ -134,6 +134,13 @@
 		},
 		created: function() {
 			this.paperData = allPaperData[this.year][this.paper];
+			this.questionTopics = this.paperData
+				.map(section => section.questions
+					.map(ques => ques.parts
+						.reduce((allTopics, part) => allTopics.concat(part.topics), [])
+						.filter((topic, i, arr) => arr.indexOf(topic) === i)
+					)
+				);
 		},
 		methods: {
 			formatePartLabel: function(label) {
@@ -217,7 +224,7 @@
 				position: sticky;
 				top: #{$h-header + (2 * $w-pad)};
 				z-index: $z-sticker;
-				padding: #{$w-pad / 2} $w-pad;
+				padding: #{$w-pad / 2} 10px;
 				border: 1px solid $c-border;
 				border-top-left-radius: 0;
 				margin: -5px 0 -5px -72px;
