@@ -9,7 +9,6 @@
     "lines": [
       {
         "label": "f",
-        "noPtsLabel": true,
         "pts": [
           [-0.5,0.577],
           [0,1],
@@ -22,6 +21,7 @@
       },
       {
         "label": "g",
+        "autoLabel": true,
         "step": 3,
         "pts": [
           [0,1],
@@ -42,7 +42,6 @@
     "lines": [
       {
         "label": "f",
-        "noPtsLabel": true,
         "pts": [
           [-0.5,0.577],
           [0,1],
@@ -55,12 +54,33 @@
       },
       {
         "label": "g",
-        "noPtsLabel": true,
+        "autoLabel": true,
         "pts": [
           [0,1],
           [1,5],
           [2,9],
           [2.5,11]
+        ]
+      }
+    ]
+  },
+  "2019-h1-1-4-2": {
+    "xRange": [-1, 8],
+    "yRange": [-20, 20],
+    "xStep": 1,
+    "yStep": 6,
+    "lines": [
+      {
+        "label": "f",
+        "detail": 7,
+        "pts": [
+          [1, -23, false],
+          [2, 0, "A(2, 0)"],
+          [3.25, 12, false],
+          [4.5, 0, "B"],
+          [5.8, -12, false],
+          [7, 0, "C"],
+          [8, 23, false]
         ]
       }
     ]

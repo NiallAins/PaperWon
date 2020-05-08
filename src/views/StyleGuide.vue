@@ -24,8 +24,9 @@
     <br/><br/>
     <pre
       class="aniFormater"
-      v-html="debugAniOut"
-    ></pre>
+      contenteditable="true"
+      spellcheck="false"
+    >{{ debugAniOut }}</pre>
 
     <br/><br/>
     <h3> Style Guide </h3>
@@ -316,11 +317,29 @@
       },
 
       debugAni: function(inp) {
-        this.debugAniOut = inp
-          .replace(/_./g, '$&      ')
-          .replace(/\|/g, '\n')
-          .replace(/.(.).{6}/g, '   $1 $&')
-
+        let out = '';
+        for (let i = 0; i < inp.length; i += 8) {
+          if (inp[i] === '|') {
+            if (inp[i + 1] === '|') {
+              out += '||';
+              i -= 6;
+            } else {
+              out += '|';
+              i -= 7;
+            }
+          } else if (inp[i] === '_') {
+            out += '_' + inp[i + 1] + '      ';
+            i -= 6;
+          } else if (inp[i + 4] === '_') {
+            out += inp.substr(i, 5) + '   ';
+            i -= 3;
+          } else {
+            out += inp.substr(i, 8);
+          }
+        }
+        this.debugAniOut = out
+          .replace(/\|/g, '|\n')
+          .replace(/.(.).{6}/g, '$&  ')
       }
     }
   }

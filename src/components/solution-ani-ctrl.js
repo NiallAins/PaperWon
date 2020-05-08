@@ -5,7 +5,7 @@ export default {
   props: {
     questionref: String,
     currentStep: Number,
-    demo: Boolean
+    mode: String
   },
   data: function() {
     return {
@@ -31,7 +31,7 @@ export default {
   created: function() {
     // Consts
     this.TYPES = ['char', 'bar', 'sqrt'];
-    this.CLASSES = ['', 'sup', 'sup-r', 'sub-r', 'sub'];
+    this.CLASSES = ['', 'sup', 'sup-r', 'sub-r', 'sub', 'long'];
     this.FRAMELENGTHFAST = 1000;
     this.FRAMELENGTHSLOW = 1800;
     this.COLORS = 5;
@@ -51,8 +51,6 @@ export default {
     //!!DEV
     editing: function(newVal) {
       clearInterval(this.frameInterval);
-      this.step = this.currentStep;
-      this.frame = 0;
       if (newVal) {
         window.addEventListener('keydown', this.NOSCROLL);
       } else {
@@ -72,15 +70,21 @@ export default {
   },
   methods : {
     renderQuestion: function() {
-      let animationCode = animations[this.questionref];
-      if (animationCode) {
-        this.aniObject = this.decodeAnimation(animationCode);
+      if (this.mode === 'topics') {
+        this.step = 0;
+        this.frameSlow = true;
+        this.aniObject = this.decodeAnimation(this.questionref);
       } else {
-        this.aniObject = [[[]]];
-        console.error('animation for question "' + this.questionRef + '" not found');
+        let animationCode = animations[this.questionref];
+        if (animationCode) {
+          this.aniObject = this.decodeAnimation(animationCode);
+        } else {
+          this.aniObject = [[[]]];
+          console.error('Animation for question "' + this.questionref + '" not found');
+        }
+        this.step = this.currentStep;
       }
 
-      this.step = this.currentStep;
       this.setScale(this.step)
       this.setHeight();
       this.initStep(this.step);
@@ -394,7 +398,7 @@ export default {
         this.step = this.aniObject.length - 1;
         this.frame = this.aniObject[this.step].length - 1;
       } else {
-        this.frame = newStep >= this.step ? 0 : this.aniObject[newStep].length - 1;
+        this.frame = 0; //newStep >= this.step ? 0 : this.aniObject[newStep].length - 1;
         this.step = newStep;
       }
       //!!DEV
@@ -402,16 +406,33 @@ export default {
         return;
       }
       //!!
-      this.frameInterval = setInterval(() => {
-        this.animationOff = false;
-        if (this.frame === this.aniObject[this.step].length - 1) {
-          clearInterval(this.frameInterval);
-          this.animationOff = true;
-          this.$emit('stepend', this.step);
-        } else {
-          this.frame++;
+      if (this.mode === 'topics') {
+        setTimeout(() => this.animate());
+        this.frameInterval = setInterval(
+          () => this.animate(),
+          this.FRAMELENGTHSLOW
+        );
+      } else {
+        this.frameInterval = setInterval(
+          () => this.animate(),
+          this.frameSlow ? this.FRAMELENGTHSLOW : this.FRAMELENGTHFAST
+        );
+      }
+    },
+
+    animate: function() {
+      this.animationOff = false;
+      if (this.frame === this.aniObject[this.step].length - 1) {
+        clearInterval(this.frameInterval);
+        this.animationOff = true;
+        this.$emit('stepend', this.step);
+        if (this.mode === 'topics') {
+          this.step = 0;
+          this.frame = 0;
         }
-      }, this.frameSlow ? this.FRAMELENGTHSLOW : this.FRAMELENGTHFAST);
+      } else {
+        this.frame++;
+      }
     },
     
     //!!DEV
@@ -441,9 +462,6 @@ export default {
             let frame = [];
             for (let i = 0; i < f.length; i += 8) {
               let term;
-              if (f[i + 4] === '_') {
-                f = f.substring(0, f[i + 4]) + '0001' + f.substring(f[i + 5]);
-              }
               if (f[i] === '_') {
                 term = {
                   type:   parseInt(f[i + 1]),
@@ -457,16 +475,18 @@ export default {
                 term[f[i + 1] === '0' ? 'value' : 'length'] = 0;
                 i -= 6;
               } else {
+                let short = f[i + 4] === '_';
                 term = {
                   type:   f[i],
                   x:      f[i + 2],
                   y:      f[i + 3],
-                  color:  f[i + 4],
-                  strike: f[i + 5],
-                  class:  f[i + 6],
-                  show:   f[i + 7]
+                  color:  short ? '0' : f[i + 4],
+                  strike: short ? '0' : f[i + 5],
+                  class:  short ? '0' : f[i + 6],
+                  show:   short ? '1' : f[i + 7]
                 }
                 term[f[i] === '0' ? 'value' : 'length'] = f[i + 1];
+                i -= short ? 3 : 0;
                 for (let key in term) {
                   if (key !== 'value') {
                     let code = term[key].charCodeAt();
@@ -477,12 +497,14 @@ export default {
               let symbols = {
                 'N': 'ln',			// Natural Log
                 'L': 'log',			// Log base 10
+                'D': 'dx',			// dx
                 'P': '&#960;',	// Pi
                 'E': '&#8800;',	// Not equal to
                 'T': '&#952;',	// Thetha
                 '-': '&#8722;', // Minus
                 "'": '&#8242;', // Derviative
-                'I': '&#8734',	// Infinity
+                'F': '&#8734',	// Infinity
+                'I': '&#8747;', // Integral
                 'M': '&#177;',	// Plus or minus
                 'F': '&#8804;',	// Less than or equal to
                 'G': '&#8805;',	// Greater than or equal to
@@ -502,12 +524,14 @@ export default {
       let symbols = {
         'ln': 'N',			// Natural Log
         'log': 'L',			// Log base 10
+        'dx': 'D',			// dx
         '&#960;': 'P',	// Pi
         '&#8800;': 'E',	// Not equal to
         '&#952;': 'T',	// Thetha
         '&#8722;': '-', // Minus
         '&#8242;': "'", // Derviative
-        '&#8734': 'I',	// Infinity
+        '&#8734': 'F',	// Infinity
+        '&#8747;': 'I', // Integral
         '&#177;': 'M',	// Plus or minus
         '&#8804;': 'F',	// Less than or equal to
         '&#8805;': 'G',	// Greater than or equal to

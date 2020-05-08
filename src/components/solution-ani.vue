@@ -9,7 +9,8 @@
 			:class="[
 				'equation-bg', { 
 				'animation-off': animationOff,
-				'frame-slow': frameSlow
+				'frame-slow': frameSlow,
+				'view-topics': mode === 'topics'
 			}]"
 			:style="{ 'font-size': fontSize + 'px' }"
 		>
@@ -43,15 +44,28 @@
 				></span>
 			</div>
 
-			<div class="buttons" v-if="!demo">
-				<button
-					class="secondary"
-					:disabled="step === 0"
-					@click="initStep(step)"> Replay </button>
-				<button
-					:class="['secondary', {'active': frameSlow }]"
-					@click="frameSlow = !frameSlow"
-				> Slow </button>
+			<div
+				class="buttons"
+				v-if="mode !== 'demo'"
+			>
+				<div v-if="mode === 'topics'">
+					<button
+						class="secondary"
+						:disabled="step !== 0"
+						@click="initStep(1)"
+					> Play </button>
+				</div>
+				<div v-else>
+					<button
+						class="secondary"
+						:disabled="step === 0"
+						@click="initStep(step)"
+					> Replay </button>
+					<button
+						:class="['secondary', {'active': frameSlow }]"
+						@click="frameSlow = !frameSlow"
+					> Slow </button>
+				</div>
 			</div>
 		</div>
 
@@ -108,7 +122,7 @@
 					<button @click="deleteFrame()">
 						Delete {{ aniObject[step].length === 1 ? 'Step' : 'Frame' }}
 					</button>
-					<br/></br>
+					<br/></br/>
 				</div>
 				<div>
 					<button
@@ -174,5 +188,5 @@
 	</div>
 </template>
 
-<style src="./solution-ani.scss" scoped lang="scss"></style>
-<script src="./solution-ani.js"></script>
+<script src="./solution-ani-ctrl.js"></script>
+<style src="./solution-ani-style.scss" scoped lang="scss"></style>

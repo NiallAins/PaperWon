@@ -1,6 +1,9 @@
 <template>
   <div class="comp-step-list">
-    <ul :style="{ 'height': (steps.length * 4.5) + 'em' }">
+    <ul
+      v-if="steps"
+      :style="{ 'height': (steps.length * 4.5) + 'em' }"
+    >
       <li
         v-for="(text, i) in steps"
         :class="{ 'active': currentStep === i }"
@@ -53,6 +56,9 @@
     methods: {
       renderQuestion: function() {
         this.steps = stepData[this.questionref];
+        if (!this.steps) {
+          console.error('Solution steps for question "' + this.questionref + '" not found');
+        }
         this.currentStep = this.value;
       }
     }

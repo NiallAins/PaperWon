@@ -23,7 +23,7 @@
 						:currentStep="aniStep"
 						questionref="2019-h1-1-2-1"
 						@stepend="continueAnimation()"
-						:demo="true"
+						mode="demo"
 					></solution-ani>
 					<br/>
 					<grapher

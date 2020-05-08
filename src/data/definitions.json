@@ -57,6 +57,13 @@
     "def": "The value below the line in a fraction.",
     "example": "In the fraction <table class=\"frac\"><tr><td>5</td></tr><tr><td>3 + 2</td></tr></table>,<br/>5 is the numerator and 3 + 2 is the denominator",
     "link": ["/topics/fractions", "More on fractions"]
-
+  },
+  "constant_of_integration": {
+    "def": "When an expression is derived, any <router-link class=\"link\" :to=\"'/definitions/constant'\">constant</router-link> values in it are removed. So when we integrate to get back to the original expression, the value <i m>C</i> is added to represent this lost constant, which is now unknownable.",
+    "link": ["/topics/integration", "More on integration"]
+  },
+  "constant": {
+    "def": "Any term in an expression which is not being multiplied by an unknown.",
+    "example": "In the expression <span class=\"math\">2<i>x</i><sup>2</sup> + 3<i>x</i>&nbsp;&#8722;&nbsp;5</span>, 5 is a constant as it is not being multipled by <i m>x</i>"
   }
 }

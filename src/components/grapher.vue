@@ -39,8 +39,8 @@
 					}"
 				>{{ line.label.text }}(x)</span>
 				<span
-					v-if="line.labelPoints"
 					v-for="p in line.pts"
+					v-if="p.label"
 					:class="['label point', { 'hide': p.alpha === 0 }]"
 					:style="{
 						'top': (p.y - 20)+ 'px',
@@ -108,6 +108,8 @@
 
 			this.$nextTick(() => {
 				this.drawAxis();
+				this.ctxSt.lineWidth = 1.1;
+				this.ctxDy.lineWidth = 1.1;
 				this.graph.lines = this.graph.lines.map((l, i) => this.toFormattedLine(l, i));
 				this.graph.lines
 					.filter(l => !l.step)
@@ -161,7 +163,7 @@
 			toFormattedLine: function(line, lIndex) {
 				// Interpolate
 				let tension = 0.6,
-						segments = 3,
+						segments = line.detail || 3,
 						_pts = line.pts.reduce((arr, p) => [...arr, p[0], p[1]], []);
 				_pts.unshift(line.pts[0][0], line.pts[0][1]);
 				_pts.push(line.pts[line.pts.length - 1][0], line.pts[line.pts.length - 1][1]);
@@ -189,8 +191,19 @@
 					col: this.onpaper ? '#000' : this.COLOR[lIndex],
 					step: line.step,
 					alpha: line.step ? 0 : 1,
-					labelPoints: !line.noPtsLabel
+					pts: []
 				};
+
+				formattedLine.pts = line.pts
+					.filter(p => p[2] !== false)
+					.map(p => {
+						return {
+							x: this.toPixel(p[0], 'x'),
+							y: this.toPixel(p[1], 'y'),
+							label: p[2] || (line.autoLabel ? `(${p[0]}, ${p[1]})` : ''),
+							alpha: line.step ? 0 : 1
+						}
+					});
 
 				if (line.label) {
 					let labeledPt = this.toPixel(line.pts[Math.floor(line.pts.length / 2)]);
@@ -200,15 +213,6 @@
 						text: line.label
 					};
 				}
-
-				formattedLine.pts = line.pts.map(p => {
-					return {
-						x: this.toPixel(p[0], 'x'),
-						y: this.toPixel(p[1], 'y'),
-						label: `(${p[0]}, ${p[1]})`,
-						alpha: line.step ? 0 : 1
-					};
-				});
 
 				return formattedLine;
 			},
@@ -228,28 +232,32 @@
 				c.stroke();
 				
 				// X Ticks
-				let xTrans = this.gridSize,
+				let xTrans = c.canvas.width - (this.gridSize / 2),
 						yTrans = this.toPixel(0, 'y'),
-						numTicks = (this.graph.xRange[1] - this.graph.xRange[0]) / (this.graph.xStep * this.graph.xLabelInc);
+						numTicks = 0;
 				c.font = this.FONTITALIC;
-				c.beginPath();
-					for (let i = 0; i <= numTicks; i++) {
-						let label = this.graph.xRange[0] + (i * this.graph.xStep * this.graph.xLabelInc);
-						if (label !== 0) {
-							c.moveTo(xTrans, yTrans - 5);
-							c.lineTo(xTrans, yTrans + 5);
-							this.axisLabels.push({
-								x: xTrans,
-								y: yTrans + 16,
-								text: label,
-								align: 'center'
-							});
+				if (this.graph.xLabelInc) {
+					xTrans = this.gridSize,
+					numTicks = (this.graph.xRange[1] - this.graph.xRange[0]) / (this.graph.xStep * this.graph.xLabelInc);
+					c.beginPath();
+						for (let i = 0; i <= numTicks; i++) {
+							let label = this.graph.xRange[0] + (i * this.graph.xStep * this.graph.xLabelInc);
+							if (label !== 0) {
+								c.moveTo(xTrans, yTrans - 5);
+								c.lineTo(xTrans, yTrans + 5);
+								this.axisLabels.push({
+									x: xTrans,
+									y: yTrans + 16,
+									text: label,
+									align: 'center'
+								});
+							}
+							xTrans += this.gridSize * this.graph.xLabelInc;
 						}
-						xTrans += this.gridSize * this.graph.xLabelInc;
-					}
-				c.stroke();
+					c.stroke();
+					xTrans -= (this.gridSize * this.graph.xLabelInc) - (this.gridSize / 2);
+				}
 				// X Line Ending
-				xTrans -= (this.gridSize * this.graph.xLabelInc) - (this.gridSize / 2);
 				c.beginPath();
 					c.lineTo(xTrans, yTrans - 5);
 					c.lineTo(xTrans + 10, yTrans);
@@ -267,24 +275,28 @@
 				c.fill();
 				c.fillText('y', xTrans + 14, yTrans);
 				// Y Ticks
-				yTrans += this.gridSize / 2;
-				numTicks = (this.graph.yRange[1] - this.graph.yRange[0]) / (this.graph.yStep * this.graph.yLabelInc);
-				c.beginPath();
-					for (let i = 0; i <= numTicks; i++) {
-						let label = this.graph.yRange[1] - (i * this.graph.yStep * this.graph.yLabelInc);
-						if (label !== 0) {
-							c.moveTo(xTrans - 5, yTrans);
-							c.lineTo(xTrans + 5, yTrans);
-							this.axisLabels.push({
-								x: xTrans - 30,
-								y: yTrans,
-								text: label,
-								align: 'right'
-							});
+				if (this.graph.yLabelInc) {
+					yTrans += this.gridSize / 2;
+					numTicks = (this.graph.yRange[1] - this.graph.yRange[0]) / (this.graph.yStep * this.graph.yLabelInc);
+					c.beginPath();
+						for (let i = 0; i <= numTicks; i++) {
+							let label = this.graph.yRange[1] - (i * this.graph.yStep * this.graph.yLabelInc);
+							if (label !== 0) {
+								c.moveTo(xTrans - 5, yTrans);
+								c.lineTo(xTrans + 5, yTrans);
+								if (!this.graph.noLabels) {
+									this.axisLabels.push({
+										x: xTrans - 30,
+										y: yTrans,
+										text: label,
+										align: 'right'
+									});
+								}
+							}
+							yTrans += this.gridSize * this.graph.yLabelInc
 						}
-						yTrans += this.gridSize * this.graph.yLabelInc
-					}
-				c.stroke();
+					c.stroke();
+				}
 			},
 			
 			drawLine: function(line, isStatic = false) {
@@ -438,7 +450,7 @@
 				}
 
 				&.point {
-					text-align: right;
+					text-align: left;
 					font-size: $f-size-md;
 					white-space: nowrap;
 				}

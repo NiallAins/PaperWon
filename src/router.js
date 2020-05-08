@@ -39,7 +39,7 @@ let router = new Router({
       component: Topics
     },
     {
-      path: '/definitions/:searchterm',
+      path: '/definitions/:searchterm?',
       name: 'definitions',
       component: Definitions,
       props: true

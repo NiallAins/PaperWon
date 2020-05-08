@@ -20,6 +20,11 @@ $c-strike: $c-error;
     font-size $l-ani,
     padding $l-ani;
 
+  &.view-topics {
+    background: none;
+    border: none;
+  }
+
   &.animation-off,
   &.animation-off .term,
   &.animation-off .term:after {
@@ -115,36 +120,22 @@ $c-strike: $c-error;
     opacity: 1;
   }
 
+  &.frac-brac {
+    transform: scale(1, 2.5);
+  }
+
   &.sub   { transform: scale(0.7) translate(-40%,  35%); }
   &.sup   { transform: scale(0.7) translate(-40%, -35%); }
   &.sub-r { transform: scale(0.7) translate( 40%,  35%); }
   &.sup-r { transform: scale(0.7) translate( 40%, -35%); }
+  &.long  { transform: scale(1, 2.5); }
   
   &.hidden,
   &.hidden.bar:after {
     opacity: 0;
     z-index: 0;
     pointer-events: none;
-    transition: 
-      top $l-ani,
-      left $l-ani,
-      color 0s ease $l-ani,
-      width 0s ease $l-ani,
-      opacity $l-ani,
-      transform 0s ease $l-ani,
-      font-size 0s ease $l-ani;
   }
-
-  // &.appearing {
-  //   transition:
-  //     top $l-ani,
-  //     left $l-ani,
-  //     color 0s ease $l-ani,
-  //     width 0s ease $l-ani,
-  //     opacity $l-ani,
-  //     transform 0s ease $l-ani,
-  //     font-size 0s ease $l-ani;
-  // }
 
   &.is-symbol {
     transform: scale(0.9);

@@ -75,7 +75,7 @@
     ["Substitute in <i m>e</i> as the value of <i m>x</i>, as stated in the question"],
     [
       "Simply the equation",
-      "Note that <span class=\"math\"><span class=\"term\">ln</span><i>e</i></span>, the natural log of <i m>e</i> is equal to 1"
+      "Note that <span class=\"math\"><span class=\"term\">ln</span><i>e</i></span>, the natural log of <i m>e</i>, is equal to 1"
     ],
     [
       "Calculate the final value of <i m>g</i>(<i m>x</i>)",
@@ -84,6 +84,34 @@
     [
       "Round to answer to two decimal places",
       "Round your final value, as stated in the question. Note that .528 rounds up to .53."
+    ]
+  ],
+  "2019-h1-1-4-1": [
+    ["State the Integral"],
+    ["Integrate each term of the expression", "For each term, add one to <i m>x</i>'s power, then divde by this new power."],
+    [
+      "Add a Constant",
+      "The value <i m>C</i> is added to every expression after integration.<br/>This represents the <def term=\"constant_of_integration\">Constant of Integration</def>."
+    ],
+    ["Simplify the expression"]
+  ],
+  "2019-h1-1-4-2": [
+    ["State the integral <span class=\"math\"><i>f</i>&#8242;(<i>x</i>)</span>"],
+    [
+      "Integrate",
+      "Get the integral of each term in <span class=\"math\"><i>f</i>&#8242;(<i>x</i>)</span> to find <span class=\"math\"><i>f</i>(<i>x</i>)</span>."
+    ],
+    [
+      "Fill in the point <i>A</i>(2, 0)",
+      "To find the value of C, fill in the <i m>x</i> and <i m>y</i> values from the point A, given in the question."
+    ],
+    [
+      "Calculate to find C",
+      "Simplify the equation to find the value of C"
+    ],
+    [
+      "Substitute C into <span class=\"math\"><i>f</i>(<i>x</i>)</span>",
+      "Once we have the value of C, we can fill it back in to <span class=\"math\"><i>f</i>(<i>x</i>)</span>, proving the statement asked for in the question."
     ]
   ]
 }

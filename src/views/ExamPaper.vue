@@ -1,114 +1,114 @@
 <template>
-		<div class="view-exam-paper">
-			<section class="row">
-				<div class="col-12 no-pad-b">
-					<p> Select a question from the paper below to work through its solution.</p>
-				</div>
-			</section>
+	<div class="view-exam-paper">
+		<section class="row">
+			<div class="col-12 no-pad-b">
+				<p> Select a question from the paper below to work through its solution.</p>
+			</div>
+		</section>
 
 
-			<section :class="['page', { 'nav-open': navOpen }]">
-				<aside>
-					<div class="aside-container">
-						<button
-							class="close"
-							@click="navOpen = false"
-						></button>
-						<table class="contents">
-							<tbody v-for="(section, sIndex) in paperData">
-								<tr>
-									<td colspan="2">
-										Section {{ String.fromCharCode(sIndex + 65) }}
-										<br>
-										<i> {{ section.title }}</i>
-									</td>
-								</tr>
-								<tr>
-									<th>Ques.</th>
-									<th>Topic</th>
-								</tr>	
-								<tr
-									v-for="(question, qIndex) in section.questions"
-									class="entry"
-									@click="scrollTo(sIndex + '-' + qIndex)"
-								>
-									<td> {{ qIndex + 1 }} </td>
-									<td>
-										<span v-for="(topic, tIndex) in questionTopics[sIndex][qIndex]">
-											<span v-if="tIndex > 0">, </span>
-											<router-link
-												class="link-small"
-												:to="'/topics/' + topic"
-											>{{ topic }}</router-link>
-										</span>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</aside>
-
-				<main>
+		<section :class="['page', { 'nav-open': navOpen }]">
+			<aside>
+				<div class="aside-container">
 					<button
-						:class="['show-aside', { 'aside-open': navOpen }]"
-						@click="navOpen = true"
+						class="close"
+						@click="navOpen = false"
+					></button>
+					<table class="contents">
+						<tbody v-for="(section, sIndex) in paperData">
+							<tr>
+								<td colspan="2">
+									Section {{ String.fromCharCode(sIndex + 65) }}
+									<br>
+									<i> {{ section.title }}</i>
+								</td>
+							</tr>
+							<tr>
+								<th>Ques.</th>
+								<th>Topic</th>
+							</tr>	
+							<tr
+								v-for="(question, qIndex) in section.questions"
+								class="entry"
+								@click="scrollTo(sIndex + '-' + qIndex)"
+							>
+								<td> {{ qIndex + 1 }} </td>
+								<td>
+									<span v-for="(topic, tIndex) in questionTopics[sIndex][qIndex]">
+										<span v-if="tIndex > 0">, </span>
+										<router-link
+											class="link-small"
+											:to="'/topics/' + topic"
+										>{{ topic }}</router-link>
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</aside>
+
+			<main>
+				<button
+					:class="['show-aside', { 'aside-open': navOpen }]"
+					@click="navOpen = true"
+				>
+					Contents
+				</button>
+
+				<div class="paper-title">
+					<h2> Leaving Certificate Examination {{ this.year }} </h2>
+					<br>
+					<h1> Mathematics </h1>
+					<h2> Paper {{ this.paper[1] }}</h2>
+					<h2> {{ this.paper[0] === 'h' ? 'Higher' : 'Ordinary' }} Level </h2>
+				</div>
+
+				<div class="contain" v-for="(section, sIndex) in paperData">
+					<div class="section-title row">
+						<div class="col-3"> Section {{ String.fromCharCode(sIndex + 65) }} </div>
+						<div class="col-6"> {{ section.title }} </div>
+						<div class="col-3"> {{ section.marks }} Marks </div>
+					</div>
+
+					<div
+						class="question"
+						v-for="(question, qIndex) in section.questions"
+						:ref="sIndex + '-' + qIndex"
 					>
-						Contents
-					</button>
+							<em> Question {{ qIndex + 1 }} </em>
+							<span class="push-right"> ({{ question.marks }} marks) </span>
 
-					<div class="paper-title">
-						<h2> Leaving Certificate Examination {{ this.year }} </h2>
-						<br>
-						<h1> Mathematics </h1>
-						<h2> Paper {{ this.paper[1] }}</h2>
-						<h2> {{ this.paper[0] === 'h' ? 'Higher' : 'Ordinary' }} Level </h2>
-					</div>
+							<p>
+								<render-html class="hide-def">{{ question.text }}</render-html>
+							</p>
 
-					<div class="contain" v-for="(section, sIndex) in paperData">
-						<div class="section-title row">
-							<div class="col-3"> Section {{ String.fromCharCode(sIndex + 65) }} </div>
-							<div class="col-6"> {{ section.title }} </div>
-							<div class="col-3"> {{ section.marks }} Marks </div>
-						</div>
-
-						<div
-							class="question"
-							v-for="(question, qIndex) in section.questions"
-							:ref="sIndex + '-' + qIndex"
-						>
-								<em> Question {{ qIndex + 1 }} </em>
-								<span class="push-right"> ({{ question.marks }} marks) </span>
-
-								<p>
-									<render-html class="hide-def">{{ question.text }}</render-html>
-								</p>
-
-								<div v-if="question.graph" class="row">
-									<div class="col-8 col-off-2 no-pad-t">
-										<grapher
-											v-if="question.graph"
-											:onpaper="true"
-											:questionref="question.graph"
-										></grapher>
-									</div>
+							<div v-if="question.graph" class="row">
+								<div class="col-8 col-off-2 no-pad-t">
+									<grapher
+										v-if="question.graph"
+										:onpaper="true"
+										:questionref="question.graph"
+									></grapher>
 								</div>
+							</div>
 
-								<router-link
-									class="question-part"
-									v-for="(part, pIndex) in question.parts"
-									:to="$route.path + '/' + [sIndex + 1, qIndex + 1, pIndex + 1].join('-')"
-								>
-										<span
-											class="part-num"
-											v-html="formatePartLabel(part.label)"
-										></span>
-										<render-html class="hide-def">{{ part.text }}</render-html>
-								</router-link>
-						</div>
+							<router-link
+								class="question-part"
+								v-for="(part, pIndex) in question.parts"
+								:to="$route.path + '/' + [sIndex + 1, qIndex + 1, pIndex + 1].join('-')"
+							>
+									<span
+										class="part-num"
+										v-html="formatePartLabel(part.label)"
+									></span>
+									<render-html class="hide-def">{{ part.text }}</render-html>
+							</router-link>
 					</div>
-				</main>
-			</section>
-		</div>
+				</div>
+			</main>
+		</section>
+	</div>
 </template>
 
 <script>
